@@ -1,1 +1,1 @@
-# RNAseqDEplus
+# RNAseq Differential Expression analysis + Annotations 
