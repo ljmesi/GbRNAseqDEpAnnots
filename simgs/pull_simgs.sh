@@ -1,0 +1,1 @@
+/home/lame5423/simgs/pull_simgs.sh
