@@ -1,4 +1,6 @@
-data/*
-!data/README.md
-!data/sample_names.txt
+data/intermediary
+data/raw
+data/ref/*
+!data/ref/sample_names.txt
+
 temp
