@@ -17,8 +17,8 @@ ANNOTATION=/crex/proj/snic2019-35-58/water_strider/final_files/genome.genes.gff3
 THREADS=${SLURM_NTASKS:-10}
 READS_DIR=/proj/snic2019-35-58/water_strider/RNA-seq_data_analysis/GbRNAseqDEpAnnots/data/raw
 
-R1=$READS_DIR/${SAMPLE_PREFIX}_L002_R1_001.fastq.gz
-R2=$READS_DIR/${SAMPLE_PREFIX}_L002_R2_001.fastq.gz
+R1=$READS_DIR/${SAMPLE_PREFIX}_R1_001.fastq.gz
+R2=$READS_DIR/${SAMPLE_PREFIX}_R2_001.fastq.gz
 
 [[ -f $R1 && -f $R2 ]] || { echo "either '$R1' or '$R2' do not exist"; exit 1; }
 
