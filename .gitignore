@@ -1,3 +1,4 @@
 data/*
 !data/README.md
+!data/sample_names.txt
 temp
