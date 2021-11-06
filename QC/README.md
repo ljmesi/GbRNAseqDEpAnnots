@@ -10,7 +10,7 @@ FastQC was run with commands:
 cd /proj/snic2019-35-58/water_strider/RNA-seq_data_analysis/GbRNAseqDEpAnnots/QC
 mkdir fastqc
 module load bioinfo-tools gnuparallel/20180822
-cat ../data/sample_names.txt | \
+cat ../data/ref/sample_names.txt | \
 parallel --eta \
 --progress \
 --bar \
@@ -25,7 +25,7 @@ Seqkit stats was run with commands:
 
 ```shell
 module load bioinfo-tools gnuparallel/20180822
-cat ../data/sample_names.txt | \
+cat ../data/ref/sample_names.txt | \
 parallel --eta \
 --keep-order \
 --interactive \
