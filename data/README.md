@@ -1,3 +1,3 @@
 # Directory contents
 
-This directory contains all raw input and intermediary data.
+This directory contains all raw, reference and intermediary data.
