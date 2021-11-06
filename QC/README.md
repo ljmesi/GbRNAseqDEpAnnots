@@ -24,6 +24,7 @@ parallel --eta \
 Seqkit stats was run with commands:
 
 ```shell
+cd /proj/snic2019-35-58/water_strider/RNA-seq_data_analysis/GbRNAseqDEpAnnots/QC
 module load bioinfo-tools gnuparallel/20180822
 cat ../data/ref/sample_names.txt | \
 parallel --eta \
@@ -42,6 +43,7 @@ parallel --eta \
 In order to summarise the initial FastQC results MultiQC was run:
 
 ```shell
+cd /proj/snic2019-35-58/water_strider/RNA-seq_data_analysis/GbRNAseqDEpAnnots/QC
 singularity exec ../simgs/multiqc.sif \
 multiqc . \
 --verbose 2> multiqc.log
