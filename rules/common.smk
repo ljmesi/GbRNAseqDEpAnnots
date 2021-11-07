@@ -30,3 +30,9 @@ PROC = 'data/interm'
 
 # Report categories
 DE = "DE analysis results"
+QC_EDA = "QC and EDA"
+
+# Common variables for rule all targets
+SHRINKAGE = ["not-shrinked","shrinked"]
+
+
