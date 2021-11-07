@@ -1,0 +1,10 @@
+name: GSEA
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconductor-topgo = 2.46.0
+  - bioconductor-rgraphviz = 2.38.0
+  - r-tidyverse = 1.3.1
+  - gawk = 5.1.0
+  - csvkit = 1.0.6

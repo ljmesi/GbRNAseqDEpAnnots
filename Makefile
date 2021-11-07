@@ -22,4 +22,11 @@ clean:
 	rm -f \
 	"data/interm/DE/normalised_counts.tsv" \
 	"results/figs/DE/normalised.correlation.rlog.svg" \
-	"results/tbls/DE/shrinked_padj-filtered.tsv"
+	"results/tbls/DE/shrinked_padj-filtered.tsv" \
+	"results/figs/DE/log_mean_log_variance.svg" \
+	"results/figs/DE/deseq_dispersions.svg" \
+	"results/tbls/DE/outliers.tsv", \
+	"results/figs/DE/MAplot_shrinked.svg", \
+	"results/figs/DE/volcanoplot.svg", \
+	"results/figs/DE/DE_heatmap.svg", \
+	"data/interm/DE/genelist_padj-filtered.tsv"

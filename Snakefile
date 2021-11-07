@@ -21,7 +21,23 @@ rule all:
         # Tables containing DE results
         expand(f"{TBLS}/DE/{{shrink_status}}_{{subsetting}}.tsv",
                 shrink_status = SHRINKAGE,
-                subsetting = ["not-filtered","padj-filtered"])
+                subsetting = ["not-filtered","padj-filtered"]),
+
+        # DESeq Model QC plots
+        expand(f"{FIGS}/DE/{{qc_type}}.svg",
+                qc_type = ["log_mean_log_variance","deseq_dispersions"]),
+        # Outliers recognised by DESeq2 gather in one table
+        f"{TBLS}/DE/outliers.tsv",
+        # Visualising the DE results
+        expand(f"{FIGS}/DE/MAplot_{{shrink_status}}.svg",
+                shrink_status = SHRINKAGE),
+        f"{FIGS}/DE/volcanoplot.svg",
+        f"{FIGS}/DE/DE_heatmap.svg",
+        f"{PROC}/DE/genelist_padj-filtered.tsv"
+        
+
+        
+
                 
                
 #### Analysis modules ####
