@@ -4,6 +4,8 @@ data/ref/*
 
 temp
 
+.snakemake
+
 bmarks/*
 !bmarks/README.md
 logs/*
