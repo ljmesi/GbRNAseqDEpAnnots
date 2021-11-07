@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-library(here)
+suppressPackageStartupMessages(library(here))
 
 snakemake@source(here("src","utils","logging.R"))
 
