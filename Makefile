@@ -16,4 +16,6 @@ run:
 	snakemake --cores 5 --use-conda
 
 clean:
-	rm -f "data/interm/DE/normalised_counts.tsv"
+	rm -f \
+	"data/interm/DE/normalised_counts.tsv" \
+	"results/figs/DE/normalised.correlation.rlog.svg"
