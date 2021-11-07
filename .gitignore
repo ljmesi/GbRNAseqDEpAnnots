@@ -3,3 +3,8 @@ data/ref/*
 !data/ref/sample_names.txt
 
 temp
+
+bmarks/*
+!bmarks/README.md
+logs/*
+!logs/README.md
