@@ -21,4 +21,5 @@ run: clean
 clean:
 	rm -f \
 	"data/interm/DE/normalised_counts.tsv" \
-	"results/figs/DE/normalised.correlation.rlog.svg"
+	"results/figs/DE/normalised.correlation.rlog.svg" \
+	"results/tbls/DE/shrinked_padj-filtered.tsv"
