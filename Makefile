@@ -16,7 +16,7 @@ clean
 
 run: clean
 	$(CONDA_ACTIVATE) ; \
-	snakemake --cores 5 --use-conda
+	snakemake --cores 7 --use-conda
 
 clean:
 	rm -f \
