@@ -10,3 +10,5 @@ bmarks/*
 !bmarks/README.md
 logs/*
 !logs/README.md
+
+results
