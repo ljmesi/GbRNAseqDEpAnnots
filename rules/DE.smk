@@ -67,3 +67,35 @@ rule plot_pca_from_transf_DESeq:
         str(SRC/"vis"/"DE"/"plot_pca_transform_DESeq.R")
 
 
+#### DE analysis ####
+
+rule execute_DE:
+    input:
+        DESeq_raw = f"{PROC}/DE/DESeq_raw.RDS"
+    output:
+        DESeq_analysis_obj = f"{PROC}/DE/DESeq-obj.RDS",
+        DESeq_results_non_shrinked = f"{PROC}/DE/not-shrinked.RDS",
+        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
+        tbl_non_shrinked = f"{TBLS}/DE/not-shrinked_not-filtered.tsv",
+        tbl_non_shrinked_padj_filtered = f"{TBLS}/DE/not-shrinked_padj-filtered.tsv",
+        tbl_shrinked = report(f"{TBLS}/DE/shrinked_not-filtered.tsv", 
+                                caption = f"{REP}/DE/shrinked.rst",
+                                category = DE),
+        tbl_shrinked_padj_filtered = report(f"{TBLS}/DE/shrinked_padj-filtered.tsv", 
+                                    caption = f"{REP}/DE/shrinked_sig.rst",
+                                    category = DE),
+    params:
+        p_adj_limit = padj_limit,
+        contrast = config["DE"]["contrasts"],
+        pAdjustMethod = config["DE"]["pAdjustMethod"]
+    conda:
+        f"{ENVS}/DE.yml"
+    benchmark:
+        BMARKS/"DE"/"execute_DE.tsv"
+    threads:
+        config["software"]["threads"]["DEseq2"]
+    log:
+        LOGS/"DE"/"execute_DE.log"
+    script:
+        str(SRC/"tbls"/"DE"/"execute_DE.R")
+

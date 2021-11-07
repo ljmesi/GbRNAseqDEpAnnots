@@ -17,7 +17,12 @@ rule all:
         f"{PROC}/DE/normalised_counts.tsv",
         expand(f"{FIGS}/DE/normalised.{{eda_type}}.{{transformation_type}}.svg",
                eda_type = ["correlation","pca"],
-               transformation_type = ["rlog","vs"])
+               transformation_type = ["rlog","vs"]),
+        # Tables containing DE results
+        expand(f"{TBLS}/DE/{{shrink_status}}_{{subsetting}}.tsv",
+                shrink_status = SHRINKAGE,
+                subsetting = ["not-filtered","padj-filtered"])
+                
                
 #### Analysis modules ####
 

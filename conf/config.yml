@@ -20,3 +20,4 @@ DE:
 software: 
     threads:
         default: 1
+        DEseq2: 7
