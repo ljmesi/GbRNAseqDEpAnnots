@@ -10,13 +10,14 @@ rule read_normalise_counts:
         normalised_counts_DESeq = f"{PROC}/DE/DESeq_normalised.RDS",
         normalised_counts = f"{PROC}/DE/normalised_counts.tsv"
     conda:
-        f"{ENVS}DE.yml"
+        f"{ENVS}/DE.yml"
     benchmark:
-        f"{BMARKS}/DE/read_normalise_counts.tsv"
+        BMARKS/"DE"/"read_normalise_counts.tsv"
     threads: 
         config["software"]["threads"]["default"]
     log: 
-        log = f"{LOGS}/DE/read_normalise_counts.log"
+        LOGS/"DE"/"read_normalise_counts.log"
     script:
-        f"{SRC}/data/DE/read_normalise_counts.R"
+        str(SRC/"data"/"DE"/"read_normalise_counts.R")
+
 
