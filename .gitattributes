@@ -1,0 +1,3 @@
+# https://github.com/github/linguist
+*.smk linguist-language=Python
+Snakefile linguist-language=Python

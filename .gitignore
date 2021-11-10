@@ -1,6 +1,14 @@
-data/intermediary
-data/raw
+data/raw/*.fastq.gz
 data/ref/*
 !data/ref/sample_names.txt
 
 temp
+
+.snakemake
+
+bmarks/*
+!bmarks/README.md
+logs/*
+!logs/README.md
+
+results
