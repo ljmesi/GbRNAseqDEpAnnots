@@ -1,0 +1,60 @@
+---
+title: "Exploring GenomicFeatures"
+output: html_notebook
+---
+
+```{r message=FALSE, warning=FALSE}
+library('GenomicFeatures')
+```
+
+```{r}
+#gff_file <- system.file("genome.genes.gff3", package="GenomicFeatures")
+txdb <- makeTxDbFromGFF("genome.genes.gff3", 
+                        format="gff3", 
+                        dbxrefTag = TRUE,
+                        organism = "Gerris buenoi",
+                        taxonomyId = 56086)
+txdb
+```
+Save TxDb object
+
+```{r}
+saveDb(txdb, file="genome.genes.sqlite")
+```
+
+```{r}
+#fdb <- loadDb(system.file("genome.genes.sqlite", package="GenomicFeatures"))
+#features(fdb)
+id_name <- id2name(txdb = txdb, feature.type = c("tx", "exon", "cds"))
+tx_ids[1:10]
+id_name["160"]
+```
+```{r}
+genes(txdb)
+transcripts(txdb)
+```
+
+
+
+```{r}
+# Group transcripts by gene
+GRList <- transcriptsBy(txdb, by = "gene")
+length(GRList)
+GRList[[12]]
+tx_ids <- names(GRList)
+#head(select(txdb, keys=tx_ids, columns="TXNAME", keytype="TXID"))
+
+```
+
+```{r}
+GRList[[2]]
+```
+
+
+The transcriptsBy function returns a GRangesList class object. As with GRanges
+objects, you can learn more about these objects by reading the GenomicRanges in-
+troductory vignette. The show method for a GRangesList object will display as a list
+of GRanges objects. And, at the bottom the seqinfo will be displayed once for the
+entire list.
+
+
