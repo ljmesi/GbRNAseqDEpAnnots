@@ -13,10 +13,12 @@ CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda act
 .PHONY: run, \
 clean
 
-run: clean
-	$(CONDA_ACTIVATE) ; \
+## run: Run the snakemake pipeline
+run:
+	$(CONDA_ACTIVATE)
 	snakemake --cores 7 --use-conda
 
+## clean: Remove intermediary files
 clean:
 	rm -f \
 	"data/interm/DE/normalised_counts.tsv" \
@@ -29,3 +31,7 @@ clean:
 	"results/figs/DE/volcanoplot.svg", \
 	"results/figs/DE/DE_heatmap.svg", \
 	"data/interm/DE/genelist_padj-filtered.tsv"
+
+## help: Show this message
+help:
+	@grep '^##' ./Makefile
