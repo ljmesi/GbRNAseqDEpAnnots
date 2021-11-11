@@ -12,3 +12,18 @@ logs/*
 !logs/README.md
 
 results
+.Rproj.user
+
+# Renv internals
+exp/explore_GenomicRanges/renv/*
+
+# Ignore old raw test counts data
+exp/collate_counts/STAR_counts/*
+exp/collate_counts/all_samples_genes_count.tsv
+
+# Ignore checkpoints
+exp/collate_counts/.ipynb_checkpoints/*
+
+# Ignore data files
+exp/explore_GenomicRanges/genome.genes.sqlite
+exp/explore_GenomicRanges/genome.genes.gff3
