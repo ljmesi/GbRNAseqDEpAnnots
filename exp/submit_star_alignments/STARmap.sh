@@ -2,7 +2,7 @@
 #SBATCH -A snic2021-5-195
 #SBATCH -o star_mapping_softmasked_%j.out
 #SBATCH -J star_mapping_softmasked
-#SBATCH -p devel -c 10
+#SBATCH -p core -c 10
 #SBATCH -t 01:00:00
 #SBATCH --mail-user=Lauri.Mesilaakso.5423@student.uu.se
 #SBATCH --mail-type=ALL
