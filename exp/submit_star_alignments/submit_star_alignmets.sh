@@ -8,4 +8,4 @@ parallel \
 --verbose \
 --jobs 1 \
 --max-replace-args 1 \
-"sbatch STARmap_devel.sh {}"
+"sbatch STARmap.sh {}"
