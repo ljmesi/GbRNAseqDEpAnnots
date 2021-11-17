@@ -18,7 +18,8 @@ STAR_MAPPING_OUTDIRS = submit_star_alignments
 ## collate_counts: Collate STAR aligner raw output gene counts to one tsv file 
 collate_counts:
 	$(CONDA_ACTIVATE)
-	find ../$(STAR_MAPPING_OUTDIRS) -name "*.tab" -print0 | xargs -0 ./collate_counts.py -o $(OUTFILE)
+	find ../$(STAR_MAPPING_OUTDIRS) -name "*.tab" -print0 \
+	| xargs -0 ./collate_counts.py -o $(OUTFILE)
 
 ## move_to_data_dir: Move collated output file to data/interm dir for further use
 move_to_data_dir:
