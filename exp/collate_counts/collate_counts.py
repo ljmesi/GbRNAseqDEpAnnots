@@ -12,15 +12,13 @@ def write_tsv(filename, df):
     """Write pandas DataFrame as tsv file"""
     df.to_csv(filename, sep='\t')
 
-def get_file_stem(file_name):
-    """Extract as string file stem name from file name"""
-    return str(Path(file_name).stem)
-
 def parse_sample_name(file_name):
     """Obtain sample name from file name"""
-    file_stem = get_file_stem(file_name)    
-    slist = file_stem.split('_')[0].split('-')
-    return slist[1] + "-" + slist[2]
+    # E.g. cuttrim2_SF-2243-GB-18-8_S46_L002
+    parent_dir_name = str(Path(file_name).parent.stem)
+    # E.g. ["SF","2243","GB","18","8"]
+    raw_sample_name = parent_dir_name.split("_")[1].split("-")
+    return raw_sample_name[3] + "-" + raw_sample_name[4]
 
 def read_tsv(filename, header_rows_count):
     """Read tsv file and return pandas DataFrame"""
