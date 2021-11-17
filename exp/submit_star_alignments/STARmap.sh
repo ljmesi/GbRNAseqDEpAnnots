@@ -13,7 +13,7 @@ module load star/2.7.9a
 SAMPLE_PREFIX=$1
 
 REFERENCE=/proj/snic2019-35-58/water_strider/final_files/indices/GenomeDir-star-2.7.9a
-ANNOTATION=/crex/proj/snic2019-35-58/water_strider/final_files/genome.genes.gff3
+ANNOTATION=/proj/snic2019-35-58/water_strider/RNA-seq_data_analysis/GbRNAseqDEpAnnots/exp/submit_star_alignments/genome.genes.gtf
 THREADS=${SLURM_NTASKS:-10}
 READS_DIR=/proj/snic2019-35-58/water_strider/RNA-seq_data_analysis/GbRNAseqDEpAnnots/data/raw
 
