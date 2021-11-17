@@ -16,9 +16,10 @@ OUTFILE = all_samples_genes_count.tsv
 
 STAR_COUNTS_DIR = STAR_counts
 
+
 retrieve_gene_counts_files:
 	mkdir -p $(STAR_COUNTS_DIR)
-	find ../.. -name "*.tab" 
+	find $$PWD/.. -name "*.tab"
 
 ## collate_counts: Collate STAR aligner raw output gene counts to one tsv file 
 collate_counts:

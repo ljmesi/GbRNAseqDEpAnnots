@@ -30,3 +30,7 @@ exp/**/genome.genes.*
 # Test data
 exp/explore_topGO/test_data
 exp/explore_topGO/test_results/*
+
+# Singularity container images
+simgs/gffread.sif
+
