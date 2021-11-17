@@ -34,3 +34,5 @@ exp/explore_topGO/test_results/*
 # Singularity container images
 simgs/gffread.sif
 
+# STAR-alignment raw files
+exp/submit_star_alignments/cuttrim2_SF-2243-GB-1*
