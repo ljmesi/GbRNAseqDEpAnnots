@@ -26,3 +26,7 @@ exp/**/.ipynb_checkpoints
 
 # Ignore data files
 exp/**/genome.genes.*
+
+# Singularity container images
+simgs/gffread.sif
+
