@@ -40,3 +40,7 @@ exp/submit_star_alignments/cuttrim2_SF-2243-GB-1*
 # STAR-alignment log-files
 exp/submit_star_alignments/star_*
 
+# Uppmax conda environment
+envs/collate_counts
+envs/.conda_envs_dir_test
+
