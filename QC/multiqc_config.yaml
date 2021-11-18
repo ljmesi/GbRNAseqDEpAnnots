@@ -1,0 +1,4 @@
+extra_fn_clean_exts:
+  - "_S4"
+extra_fn_clean_trim:
+  - "cuttrim2_SF-2243-"
