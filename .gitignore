@@ -36,3 +36,7 @@ simgs/gffread.sif
 
 # STAR-alignment raw files
 exp/submit_star_alignments/cuttrim2_SF-2243-GB-1*
+
+# STAR-alignment log-files
+exp/submit_star_alignments/star_*
+
