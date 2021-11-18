@@ -1,11 +1,13 @@
 .ONESHELL:
-SHELL = /bin/bash
+SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 .DELETE_ON_ERROR:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-# Note: These rules in this script didn't work
+
+#### NOTE: These rules in this script didn't work ####
+
 
 QC_DIR = /crex/proj/snic2019-35-58/water_strider/RNA-seq_data_analysis/GbRNAseqDEpAnnots/QC
 
@@ -39,7 +41,5 @@ seqkit:
         "singularity exec ../simgs/seqkit.sif seqkit stats ../data/raw/{}_R1_001.fastq.gz ../data/raw/{}_R2_001.fastq.gz >> seqkit_stats.tsv 2>&1"
 
 multiqc:
-	cd $(QC_DIR)
-	singularity exec ../simgs/multiqc.sif multiqc . \
-	--verbose 2> multiqc.log
+	singularity exec ../simgs/multiqc.sif multiqc . --verbose --config multiqc_config.yaml 2> multiqc.log
 
