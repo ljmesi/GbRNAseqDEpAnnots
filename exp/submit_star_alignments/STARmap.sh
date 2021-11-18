@@ -3,7 +3,7 @@
 #SBATCH -o star_mapping_softmasked_%j.out
 #SBATCH -J star_mapping_softmasked
 #SBATCH -p core -c 10
-#SBATCH -t 1-00:00:00
+#SBATCH -t 08:00:00
 #SBATCH --mail-user=Lauri.Mesilaakso.5423@student.uu.se
 #SBATCH --mail-type=ALL
 
