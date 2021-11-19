@@ -11,7 +11,8 @@ CONDA_ENV_NAME = snakemake
 CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate $(CONDA_ENV_NAME)
 
 .PHONY: run, \
-clean
+clean, \
+help
 
 ## run: Run the snakemake pipeline
 run:
