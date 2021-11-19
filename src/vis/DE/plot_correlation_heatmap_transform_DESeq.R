@@ -39,9 +39,8 @@ plot_heatmap <- function(mat_cor,
 
     # Plot heatmap
     corr_heatmap <- pheatmap(mat_cor,
-                            color = colours,  
-                            annotation = select(mdata, 
-                                                Condition))
+                             color = colours,  
+                             annotation = select(mdata, condition))
     dev.off()
 }
 
@@ -50,25 +49,24 @@ plot_heatmap <- function(mat_cor,
 meta <- read_tsv(file = snakemake@input[["metadata"]],
                  col_types = "ccc")
 
-metadata <- create_meta(meta, get_sample_names(meta))
+metadata <- create_meta(meta)
 
 dds <- readRDS(snakemake@input[["normalised_counts_DESeq"]])
 
 
 #### Transform the data so that it's better visualised with heatmaps ####
-rld <- rlog(dds, 
-            blind=TRUE)
+rld <- rlog(dds, blind=TRUE)
+vstd <- vst(dds, blind=TRUE)
 
-
-vstd <- vst(dds, 
-           blind=TRUE)
-
+#### Store the transformed objects for further use ####
+saveRDS(rld, file = snakemake@output[["rlog_transformed"]])
+saveRDS(vstd, file = snakemake@output[["vs_transformed"]])
 
 #### Do the actual plotting ####
 plot_heatmap(mat_cor = compute_pairwise_correlation(rld),
-             output_dest = snakemake@output[["rlog_transformed_corr_heatmap"]]
-            )
+             output_dest = snakemake@output[["rlog_transformed_corr_heatmap"]],
+             mdata = metadata)
 
 plot_heatmap(mat_cor = compute_pairwise_correlation(rld),
-             output_dest = snakemake@output[["vs_transformed_corr_heatmap"]]
-            )
+             output_dest = snakemake@output[["vs_transformed_corr_heatmap"]],
+             mdata = metadata)

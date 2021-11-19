@@ -31,7 +31,8 @@ clean:
 	"results/figs/DE/MAplot_shrinked.svg", \
 	"results/figs/DE/volcanoplot.svg", \
 	"results/figs/DE/DE_heatmap.svg", \
-	"data/interm/DE/genelist_padj-filtered.tsv"
+	"data/interm/DE/genelist_padj-filtered.tsv", \
+	"data/interm/GSEA/geneIDs_GOs.tsv"
 
 ## help: Show this message
 help:

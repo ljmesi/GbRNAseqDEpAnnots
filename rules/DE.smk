@@ -21,7 +21,8 @@ rule read_normalise_counts:
         str(SRC/"data"/"DE"/"read_normalise_counts.R")
 
 
-# RNA-seq counts sample-wise QC and EDA
+#RNA-seq counts sample-wise QC and EDA
+
 rule plot_correlation_heatmaps_from_transf_DESeq:
     input:
         normalised_counts_DESeq = f"{PROC}/DE/DESeq_normalised.RDS",
@@ -32,7 +33,9 @@ rule plot_correlation_heatmaps_from_transf_DESeq:
                                                category = QC_EDA),
         vs_transformed_corr_heatmap = report(f"{FIGS}/DE/normalised.correlation.vs.svg",
                                              caption = f"{REP}/DE/vs_correlation_heatmap.rst",
-                                             category = QC_EDA)
+                                            category = QC_EDA),
+        rlog_transformed = f"{PROC}/DE/rlog_transformed.RDS",
+        vs_transformed = f"{PROC}/DE/vs_transformed.RDS"
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
@@ -46,7 +49,8 @@ rule plot_correlation_heatmaps_from_transf_DESeq:
 
 rule plot_pca_from_transf_DESeq:
     input:
-        normalised_counts_DESeq = f"{PROC}/DE/DESeq_normalised.RDS",
+        rlog_transformed = f"{PROC}/DE/rlog_transformed.RDS",
+        vs_transformed = f"{PROC}/DE/vs_transformed.RDS",
         metadata = config["DE"]["Experimental_design"]
     output:
         rlog_transformed_pca = report(f"{FIGS}/DE/normalised.pca.rlog.svg",
