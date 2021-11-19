@@ -242,7 +242,7 @@ rule select_geneIDs_and_padj:
     threads: 
         config["software"]["threads"]["default"]
     conda:
-        f"{ENVS}GSEA.yml"
+        f"{ENVS}/GSEA.yml"
     benchmark:
         BMARKS/"DE"/"select_geneIDs_and_padj.tsv"
     log: 
