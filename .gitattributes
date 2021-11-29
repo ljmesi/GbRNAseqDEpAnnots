@@ -5,3 +5,6 @@ Snakefile linguist-language=Python
 **/*.html linguist-generated=true
 workflow/report.html linguist-generated=true
 
+# Handle diffs and merges of jupyter notebooks more gracefully
+*.ipynb	diff=jupyternotebook
+*.ipynb	merge=jupyternotebook
