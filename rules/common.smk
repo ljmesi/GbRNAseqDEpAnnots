@@ -12,10 +12,9 @@ FIGS = 'results/figs'
 PICS = 'results/pics'
 TBLS = 'results/tbls'
 
-# Workflow
+# Workflow paths
 ENVS = '../envs'
-# Path() doesn't work https://github.com/snakemake/snakemake/issues/798#issue-762994335
-#ENVS = project_root / 'envs'
+#ENVS = project_root / 'envs' # Path() doesn't work https://github.com/snakemake/snakemake/issues/798#issue-762994335
 REP = '../report/doc'
 REP = project_root/'report'/'doc'
 BMARKS = project_root/'bmarks'
@@ -31,8 +30,12 @@ PROC = 'data/interm'
 # Report categories
 DE = "DE analysis results"
 QC_EDA = "QC and EDA"
+QC_DESEQ = "QC of DESeq model fit"
+GSEA = "GSEA"
+SUM = "Summarise results"
 
 # Common variables for rule all targets
 SHRINKAGE = ["not-shrinked","shrinked"]
 
-
+# In case p-adj is given by the user convert it to float
+padj_limit = float(config["DE"]["p-adj"])
