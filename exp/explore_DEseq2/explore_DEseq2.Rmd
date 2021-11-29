@@ -1,0 +1,73 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r message=FALSE, warning=FALSE}
+library(DESeq2)
+library(tidyverse)
+library(magrittr)
+```
+
+
+```{r}
+meta <- read_tsv(file = "experiment_metadata.tsv",
+                 col_types = "ccc")
+
+raw <- read_delim(file = "all_ReadsPerGene.out.tsv", 
+                delim = "\t",
+                col_types = "ciiiiiiii")
+
+```
+
+
+```{r}
+replace_row_names_with_col <- function(df, col_name_to_row_name){
+  df %<>% remove_rownames %>% 
+        column_to_rownames(var = col_name_to_row_name)
+}
+
+create_meta <- function(df){
+  sample_names <- paste(df$Condition, 
+                        df$Sample_ID, 
+                        sep = "-")
+  condition <- paste(df$Condition, 
+                     df$Phenotype, 
+                     sep = "_")
+  metadata <- data.frame(sample_names, condition, 
+                         row.names = 1, 
+                         stringsAsFactors = TRUE)
+}
+
+meta_df <- create_meta(meta)
+meta_df
+
+```
+
+```{r}
+cts <- replace_row_names_with_col(raw, "Genes")
+cts
+```
+
+
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = replace_row_names_with_col(raw, "Genes"),
+                              colData = create_meta(meta),
+                              design = ~ condition)
+```
+
+
+```{r}
+dds <- dds[rowSums(counts(dds)) > 1, ]
+
+dds_normalised <- estimateSizeFactors(dds)
+```
+
+
+
+```{r}
+sizeFactors(dds_normalised)
+```
+

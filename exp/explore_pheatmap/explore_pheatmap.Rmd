@@ -1,0 +1,143 @@
+---
+title: "Explore pheatmap"
+output: html_notebook
+---
+
+# Load libraries
+
+```{r}
+suppressPackageStartupMessages({
+  library(DESeq2)
+  library(pheatmap)
+  library(RColorBrewer)
+  library(magrittr)
+  })
+```
+
+# Working example from biostars
+
+URL: https://www.biostars.org/p/240404/
+
+```{r}
+DAT <- matrix(c(
+771,1176,1018,1042,275,949,823,1250,348,622,1244,
+465,984,766,790,573,784,592,1250,1222,421,1103,
+171,288,194,80,547,528,249,959,72,81,224,
+132,122,90,50,44,206,127,108,52,59,144,
+0,9,5,9,0,10,17,0,0,0,0),
+nrow = 5, ncol = 11, byrow = TRUE)
+
+group <-  c("grp1","grp2","grp3","grp4","grp5","grp6","grp7","grp8","grp9","grp9","grp9")
+
+annotation_c <- as.data.frame(group)
+```
+
+```{r}
+colnames(DAT) <- paste(group," ", "no.",seq_len(11),sep="")
+rownames(DAT) <- paste(rep(c("grp"),5),91:95,sep="_")
+```
+
+```{r}
+rownames(annotation_c) <- colnames(DAT)
+```
+
+
+
+```{r}
+#annotation_r <- as.data.frame(rownames(DAT))
+
+pheatmap(DAT, 
+         color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(length(seq_len(10))),
+         cluster_cols=FALSE,
+         cluster_rows=FALSE,
+         annotation_col=annotation_c)
+```
+
+# My use case
+
+
+```{r}
+### Set a colour palette
+heat_colours <- brewer.pal(9, "Blues")
+
+dds <- readRDS("DESeq_normalised.RDS")
+
+transformed_data <- readRDS("norm_transformed.RDS")
+
+select <- order(rowMeans(counts(dds,normalized=TRUE)),
+                decreasing=TRUE)[1:20]
+
+```
+
+
+```{r}
+# Index
+select <- order(rowMeans(counts(dds,normalized=TRUE)),decreasing=TRUE)[1:20]
+sample <- colData(dds)[,c("condition")]
+df <- as.data.frame(sample)
+rownames(df) <- rownames(colData(dds))
+```
+
+
+```{r}
+rownames(colData(dds))
+```
+```{r}
+transformed_data$condition
+```
+```{r}
+transp <- t(tr_assay)
+sampleDists <- dist(t(tr_assay), method = "eucledian")
+sampleDistMatrix <- as.matrix(sampleDists)
+```
+
+
+
+```{r}
+# Open file
+# svg(snakemake@output[["count_matrix"]], 
+#     width = width_in, 
+#     height = height_in)
+
+tr_assay <- assay(transformed_data)
+
+# Create the plot
+pheatmap(tr_assay[select,],
+         color = heat_colours,
+         cluster_rows=FALSE, 
+         show_rownames=TRUE,
+         cluster_cols=FALSE, 
+         annotation_col=df)
+
+# Close the file
+# dev.off()
+
+
+
+rownames(sampleDistMatrix) <- row.names(sampleDistMatrix)
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette(brewer.pal(9, "Blues"))(255)
+#colors <- brewer.pal(9, "Blues")
+
+
+
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col=colors)
+```
+
+```{r}
+dist(t(tr_assay))
+row.names(sampleDistMatrix) %>%
+  gsub("1._","", .)
+```
+```{r}
+row.names(sampleDistMatrix)
+```
+
+
+
+
+
+
