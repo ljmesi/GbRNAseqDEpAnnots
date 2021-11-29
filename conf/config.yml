@@ -1,9 +1,10 @@
+
 # Parameters used for Differential Expression analysis
 DE:
     # This is used with counts.raw.txt and subread_counts.txt
     # Experimental_design: "conf/experiment_metadata.tsv"
     # This is used only with STAR_counts_all.csv data file
-    Experimental_design: "conf/experiment_metadata_STAR_counts_all.tsv"
+    Experimental_design: "conf/experiment_metadata.tsv"
     Exp_design_unique_column: "Sample_ID"
     p-adj: 0.01
     volcano_top_genes: 50
@@ -12,12 +13,44 @@ DE:
     # Contrasts for the deseq2 results method. The contrast must be comprised of 
     # a concatenation with " " of metadata's Condition and Phenotype columns
     contrasts:
+        # log_2(numerator/denominator)
         # name of numerator level for the fold change (level to compare)
-        - "18/6 Short winged"
+        - "18_Short_winged"
         # name of denominator level for the fold change (base level)
-        - "12/12 Long winged"
+        - "12_Long_winged"
 
 software: 
     threads:
         default: 1
         DEseq2: 7
+    utils:
+        csvkit_log: "src/utils/csvkit_log.sh"
+    GSEA:
+        expandGenes: "src/data/GSEA/expandGenes.awk"
+
+    #     fastalength_log: "workflow/src/utils/fastalength_log.sh"
+    #     collect_fasta: "workflow/src/utils/collect_fasta.awk"
+    #     append_lineage: "workflow/src/utils/append_lineage.awk"
+    #     compress_data: "workflow/src/utils/summariseAllData.awk"
+    #     check_timeout: "workflow/src/utils/check_timeout.sh"
+    #     threads: 7
+    # InterProScan:
+    #     summarise_InterProScan: "workflow/src/tbls/InterProScan/summariseInterProScan.awk"
+
+URLs:
+    proteome: "https://i5k.nal.usda.gov/data/Arthropoda/gerbue-(Gerris_buenoi)/Gbue_2.0/2.Official%20or%20Primary%20Gene%20Set/gerbue_OGSv1.1/gerbue_OGSv1.1_pep.fa"
+    genome: "https://i5k.nal.usda.gov/data/Arthropoda/gerbue-(Gerris_buenoi)/Current%20Genome%20Assembly/1.Genome%20Assembly/Gbue_2.0/Scaffolds/GCA_001010745.2_Gbue_2.0_genomic.fna.gz"
+
+GSEA:
+    p_value: 0.05
+    GOcategories:
+        - "BP"
+        - "MF"
+        - "CC"
+    GOhierarchyTraversingAlgorithms:
+        - "classic"
+        - "elim"
+        - "weight01"
+        - "parentchild"
+        - "weight"
+        - "lea"
