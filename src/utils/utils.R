@@ -52,3 +52,25 @@ get_sample_names <- function(metadf){
 }
 
 
+
+select_cols_BL62 <- function(df){
+    # Drop less interesting columns
+    df %>% 
+    select(-sacc,
+           -(qstart:send),
+           -(score:length),
+           -(nident:ppos),
+           -qcovhsp) %>%
+    # Rearrange columns
+    select(Genes = qseqid,
+           BL62_sseqid = sseqid,
+           BL62_evalue = evalue,
+           BL62_bitscore = bitscore,
+           BL62_pident = pident,
+           BL62_qcovs = qcovs,
+           BL62_stitle = stitle,
+           BL62_salltitles = salltitles,
+           BL62_staxids = staxids,
+           BL62_lineage)
+    # rename(new = old)
+}
