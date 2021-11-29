@@ -37,7 +37,12 @@ print("DESeq analysis run and the output saved to .RDS object")
 #### Non-shrinked log2 fold changes ####
 
 # Obtain results as log2fold changes relative to the 12:12 condition
-contrast <- c("Condition", snakemake@params[["contrast"]])
+print("Print contrast parameters:")
+print(snakemake@params[["contrast"]])
+
+contrast <- c("condition", snakemake@params[["contrast"]])
+print(paste0("This is the numerator: ", contrast[2], " and this is the denominator: ", contrast[3]))
+
 DESeq_res <- results(dds_run, 
                      contrast = contrast, 
                      alpha = padj_limit, 
@@ -63,8 +68,7 @@ write.table(x = as.data.frame(res) %>%
 
 
 # Take the subset of padj < padj_limit
-res_filtered <- subset(res, 
-                  padj < padj_limit)
+res_filtered <- subset(res, padj < padj_limit)
 
 write.table(x = as.data.frame(res_filtered) %>% 
                 rownames_to_column(var = rowname_col), 
@@ -75,8 +79,13 @@ write.table(x = as.data.frame(res_filtered) %>%
             sep = "\t")
 
 
-#### Shrinked log2 fold changes ####
 
+
+#### Shrinked log2 fold changes ####
+# https://github.com/snakemake-workflows/rna-seq-star-deseq2/blob/master/workflow/scripts/deseq2.R
+# shrink fold changes for lowly expressed genes
+# use ashr so we can use `contrast` as conversion to coef is not trivial
+# see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#extended-section-on-shrinkage-estimators
 DESeq_res_shrinked <- lfcShrink(dds = dds_run,
                                 contrast = contrast,
                                 res = DESeq_res,
@@ -86,8 +95,7 @@ DESeq_res_shrinked <- lfcShrink(dds = dds_run,
 # sort by p-value
 res <- DESeq_res_shrinked[order(DESeq_res_shrinked$padj),]
 
-saveRDS(res, 
-        file = snakemake@output[["DESeq_results_shrinked"]])
+saveRDS(res, file = snakemake@output[["DESeq_results_shrinked"]])
 
 write.table(x = as.data.frame(res) %>% 
                 rownames_to_column(var = rowname_col), 
@@ -99,8 +107,7 @@ write.table(x = as.data.frame(res) %>%
 
 # Take the subset of padj < padj_limit
 
-res_filtered <- subset(res, 
-                  padj < padj_limit)
+res_filtered <- subset(res, padj < padj_limit)
 
 write.table(x = as.data.frame(res_filtered) %>% 
                 rownames_to_column(var = rowname_col), 
@@ -113,8 +120,7 @@ write.table(x = as.data.frame(res_filtered) %>%
 print("The shrinked log2fold DESeq results obtained and saved to .RDS object")
 
 print("mcols-command: column metadata")
-mcols(res,
-      use.names = TRUE)
+mcols(res, use.names = TRUE)
 print("Standard output of the DESeqResults object")
 res
 print("summary-command: basic data about the results")

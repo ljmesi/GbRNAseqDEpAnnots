@@ -1,11 +1,12 @@
 #!/usr/bin/env Rscript
 
-suppressPackageStartupMessages(library(here))
+suppressPackageStartupMessages({
+        library(here)
+        library(DESeq2)
+        library(tidyverse)
+        })
 
 snakemake@source(here("src","utils","logging.R"))
-
-library(DESeq2)
-library(tidyverse)
 
 snakemake@source(here("src","utils","utils.R"))
 
@@ -24,7 +25,7 @@ if (snakemake@threads > 1) {
     parallel <- TRUE
 }
 
-contrast <- c("Condition", snakemake@params[["contrast"]])
+contrast <- c("condition", snakemake@params[["contrast"]])
 
 res_w_outliers <- results(dds, 
                           contrast = contrast, 
@@ -38,24 +39,26 @@ rowname_col <- "Genes"
 res_w_outliers <- as.data.frame(res_w_outliers[order(res_w_outliers$padj),]) %>%
         rownames_to_column(rowname_col)
 
+print(head(res_w_outliers))
+
 # Prepare a dataframe without outliers (indicated by having pvalue equal to NA)
 
 res_without_outliers <- as.data.frame(readRDS(snakemake@input[["DESeq_results_shrinked"]])) %>%
         rownames_to_column(rowname_col)
 
-
+print(head(res_without_outliers))
 
 #### Read in raw counts to a data frame ####
 raw_counts <- read.table(file = snakemake@input[["raw_counts"]],
                 header = TRUE,
-                sep = "\t",
-                row.names = 1)
+                sep = "\t")
 
 meta <- read_tsv(file = snakemake@input[["metadata"]],
                  col_types = "ccc")
 
+colnames(raw_counts) <- c(rowname_col, rownames(create_meta(meta)))
 
-colnames(raw_counts) <- c(rowname_col, get_sample_names(meta))
+print(head(raw_counts))
 
 # Find rows which differ on pvalue column
 outliers <- anti_join(x = res_w_outliers, 
