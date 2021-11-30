@@ -1,1 +1,1 @@
-Gene clustering heatmap of rlog transformed gene transcript counts data. For further information on this visualisation, please see: `DEseq2 vignette <https://www.bioconductor.org/packages/devel/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#gene-clustering>`
+Gene clustering heatmap of rlog transformed gene transcript counts data. For further information on this visualisation, please see: `DEseq2 vignette <https://www.bioconductor.org/packages/devel/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#gene-clustering>`_
