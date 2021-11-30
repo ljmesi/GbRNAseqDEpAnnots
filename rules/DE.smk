@@ -55,11 +55,12 @@ rule plot_QC_heatmaps:
     output:
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
         count_matrix = report(f"{FIGS}/DE/{{transformation}}_count_matrix.svg",
+        caption = f"{REP}/DE/count_matrix.rst",
         category = QC_EDA),
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-sample-to-sample-distances
         sample_to_sample_distances = report(f"{FIGS}/DE/{{transformation}}_sample-to-sample-distances.svg",
-        category = QC_EDA)
         caption = f"{REP}/DE/sample_to_sample_distances.rst",
+        category = QC_EDA)
     params:
         f"{PROC}/DE/DESeq_normalised.RDS"
     conda:
