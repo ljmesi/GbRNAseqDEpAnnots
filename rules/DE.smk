@@ -20,16 +20,16 @@ rule read_normalise_counts:
 
 #### QC and EDA ####
 
-rule plot_gene_clustering:
+rule plot_correlation_heatmaps_from_transf_DESeq:
     input:
         normalised_counts_DESeq = f"{PROC}/DE/DESeq_normalised.RDS",
         metadata = config["DE"]["Experimental_design"]
     output:
-        rlog_gene_clustering_heatmap = report(f"{FIGS}/DE/gene_clustering.rlog.svg",
-                                                caption = f"{REP}/DE/rlog_gene_clustering_heatmap.rst",
+        rlog_transformed_corr_heatmap = report(f"{FIGS}/DE/normalised.correlation.rlog.svg",
+                                                caption = f"{REP}/DE/rlog_correlation_heatmap.rst",
                                                 category = QC_EDA),
-        vs_gene_clustering_heatmap = report(f"{FIGS}/DE/gene_clustering.vs.svg",
-                                            caption = f"{REP}/DE/vs_gene_clustering_heatmap.rst",
+        vs_transformed_corr_heatmap = report(f"{FIGS}/DE/normalised.correlation.vs.svg",
+                                            caption = f"{REP}/DE/vs_correlation_heatmap.rst",
                                             category = QC_EDA),
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#effects-of-transformations-on-the-variance
         rlog_meanSdPlot = f"{FIGS}/DE/rlog_meanSdPlot.svg",
@@ -42,11 +42,11 @@ rule plot_gene_clustering:
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
-        BMARKS/"DE"/"plot_gene_clustering.tsv"
+        BMARKS/"DE"/"plot_correlation_heatmaps_from_transf_DESeq.tsv"
     log: 
-        LOGS/"DE"/"plot_gene_clustering.log"
+        LOGS/"DE"/"plot_correlation_heatmaps_from_transf_DESeq.log"
     script:
-        str(SRC/"vis"/"DE"/"plot_gene_clustering_transform_DESeq.R")
+        str(SRC/"vis"/"DE"/"plot_correlation_heatmap_transform_DESeq.R")
 
 
 rule plot_QC_heatmaps:
@@ -79,10 +79,10 @@ rule plot_pca_from_transf_DESeq:
         vs_transformed = f"{PROC}/DE/vs_transformed.RDS",
         metadata = config["DE"]["Experimental_design"]
     output:
-        rlog_transformed_pca = report(f"{FIGS}/DE/normalised.pca.rlog.svg",
+        rlog_transformed_pca = report(f"{FIGS}/DE/pca.rlog.svg",
                                         caption = f"{REP}/DE/rlog_qc_pca.rst",
                                         category = QC_EDA),
-        vs_transformed_pca = report(f"{FIGS}/DE/normalised.pca.vs.svg",
+        vs_transformed_pca = report(f"{FIGS}/DE/pca.vs.svg",
                                     caption = f"{REP}/DE/vs_qc_pca.rst",
                                     category = QC_EDA)
     conda:
