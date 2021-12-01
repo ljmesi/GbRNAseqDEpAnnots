@@ -1,0 +1,151 @@
+---
+title: "Exploring gene clustering"
+output: html_notebook
+---
+
+
+```{r}
+suppressPackageStartupMessages({
+  library(here)
+  library(DESeq2)
+  library(pheatmap)
+  library(tidyverse)
+  #library(RColorBrewer)
+  library(vsn)
+  library(genefilter)
+  })
+```
+
+```{r}
+source("utils.R")
+source("fig_params.R")
+#### Set a colour palette ####
+#heat_colours <- brewer.pal(6, "YlOrRd")
+
+plot_meanSd <- function(out_file, 
+                        transformed_obj, 
+                        w_in = width_in, 
+                        h_in = height_in){
+    # Open file
+    svg(out_file, 
+        width = w_in, 
+        height = h_in)
+
+    # Create the plot
+    meanSdPlot(assay(transformed_obj))
+    # Close the file
+    dev.off()
+}
+
+#### Read in meta data ####
+meta <- read_tsv(file = "experiment_metadata.tsv",
+                 col_types = "ccc")
+
+metadata <- create_meta(meta)
+
+dds <- readRDS("DESeq_normalised.RDS")
+
+#### Transform the data so that it's better visualised with heatmaps ####
+rld <- rlog(dds, blind=TRUE)
+vstd <- vst(dds, blind=TRUE)
+# this gives log2(n + 1)
+ntd <- normTransform(dds)
+
+
+
+
+```
+
+#### Store the transformed objects for further use ####
+saveRDS(rld, file = snakemake@output[["rlog_transformed"]])
+saveRDS(vstd, file = snakemake@output[["vs_transformed"]])
+saveRDS(ntd, file = snakemake@output[["norm_transformed"]])
+
+#### Plot meanSd ####
+# see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#effects-of-transformations-on-the-variance
+plot_meanSd(snakemake@output[["rlog_meanSdPlot"]], rld)
+plot_meanSd(snakemake@output[["vs_meanSdPlot"]], vstd)
+plot_meanSd(snakemake@output[["norm_meanSdPlot"]], ntd)
+
+```{r}
+anno <- as.data.frame(colData(vstd)[, c("condition")])
+condition <- colData(vstd)$condition
+anno2 <- as.data.frame(condition)
+rownames(anno2) <- rownames(colData(vstd))
+```
+
+
+
+```{r}
+create_annotation <- function(dESeqTransformObject){
+  #anno <- as.data.frame(colData(dESeqTransformObject)[, c("condition")])
+  condition <- colData(dESeqTransformObject)$condition
+  anno <- as.data.frame(condition)
+  rownames(anno) <- rownames(colData(dESeqTransformObject))
+  anno
+}
+
+extract_n_highest_var_across_samples <- function(dESeqTransformObject, n){
+  topVarGenes <- head(order(rowVars(assay(dESeqTransformObject)), decreasing = TRUE), n)
+}
+
+get_deviation_from_avg_across_samples <- function(dESeqTransformObject, pos_of_genes_of_interest){
+  mat <-assay(dESeqTransformObject)[ pos_of_genes_of_interest, ]
+  mat <- mat - rowMeans(mat)
+}
+
+#### Plot heatmap ####
+plot_heatmap <- function(mat, 
+                         output_dest,
+                         annot = annotation,
+                         heatmap_title = "Clustering of 20 genes with the variance across samples",
+                         w_in = width_in,
+                         h_in = height_in) {
+  svg(output_dest, 
+      width = w_in,
+      height = h_in)
+  
+  # Plot heatmap
+  corr_heatmap <- pheatmap(mat,
+                         main = heatmap_title,
+                         annotation = annot)
+  dev.off()
+}
+
+plot_heatmap(mat = get_deviation_from_avg_across_samples(dESeqTransformObject = vstd,
+                                                         pos_of_genes_of_interest = extract_n_highest_var_across_samples(dESeqTransformObject = vstd,
+                                                                                                                         n = 20)),
+             output_dest = "heatmap.svg",
+             annot = create_annotation(dESeqTransformObject = vstd))
+
+```
+
+```{r}
+colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(100)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Do the actual plotting ####
+topVarGenes <- head(order(rowVars(assay(rld)), decreasing = TRUE), 20)
+
+
+
+
+
+plot_heatmap(mat_cor = compute_pairwise_correlation(rld),
+             output_dest = snakemake@output[["rlog_transformed_corr_heatmap"]],
+             mdata = metadata)
+plot_heatmap(mat_cor = compute_pairwise_correlation(vstd),
+             output_dest = snakemake@output[["vs_transformed_corr_heatmap"]],
+             mdata = metadata)
