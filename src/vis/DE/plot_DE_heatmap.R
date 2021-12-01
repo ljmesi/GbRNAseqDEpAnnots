@@ -25,8 +25,8 @@ meta <- read_tsv(file = snakemake@input[["metadata"]],
                  col_types = "ccc")
 
 Condition <- paste(meta$Condition, 
-                       meta$Phenotype, 
-                       sep = " ")
+                  meta$Phenotype, 
+                  sep = " ")
 
 # Form a sample name vector
 sample_names <- paste(meta$Condition, 
@@ -50,8 +50,6 @@ results <- as_tibble(results) %>%
 
 ## Extract significant genes
 sigOE <- subset(results, padj < padj_limit)
-
-# normalised_counts <- readRDS(snakemake@input[["normalised_counts"]])
 
 normalised_counts <- read.table(file = snakemake@input[["normalised_counts"]],
                                 header = TRUE,
@@ -77,10 +75,11 @@ svg(snakemake@output[["DE_heatmap"]],
 pheatmap(norm_OEsig,
          color = heat_colours, 
          cluster_rows = TRUE, 
-         show_rownames =FALSE,
-         annotation = annotation, 
+         show_rownames =TRUE,
+         annotation_col = annotation,
+         fontsize_row = 5, 
          border_color=NA, 
-         fontsize = 25, 
+         fontsize = 25,
          scale="row", 
          height = 20)
 dev.off()
