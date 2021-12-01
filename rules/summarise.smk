@@ -27,7 +27,7 @@ rule one_row_per_geneID:
                caption = f"{REP}/summarise/tsv_compressed.rst",
                category = SUM)
     params:
-        str(SRC/"tbls"/"summarise"/"compress_to_one_row.py")    
+        str(SRC/"tbls"/"summarise"/"compress_to_one_row.py")
     benchmark:
         f"{BMARKS}/summarise/one_row_per_geneID.tsv"
     log:

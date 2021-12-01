@@ -14,8 +14,6 @@ rule assign_GO_terms_to_geneIDs:
         f"{ENVS}/GSEA.yml"
     benchmark:
         BMARKS/"GSEA"/"assign_GO_terms_to_geneIDs_{{GO_category}}.tsv"
-    threads: 
-        config["software"]["threads"]["default"]
     log: 
         LOGS/"GSEA"/"assign_GO_terms_to_geneIDs_{{GO_category}}.log"
     script:
@@ -34,7 +32,7 @@ rule expand_genes:
     benchmark:
         BMARKS/"GSEA"/"expand_genes_{{GO_category}}.tsv"
     params:
-        src = config["software"]["GSEA"]["expandGenes"]
+        str(SRC/"data"/"GSEA"/"expandGenes.awk")
     log: 
         LOGS/"GSEA"/"genes_GO_{{GO_category}}.log"
     shell:    
