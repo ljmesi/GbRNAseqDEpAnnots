@@ -50,10 +50,7 @@ dds_normalised <- estimateSizeFactors(dds)
 print("Counts normalised")
 
 
-#### Store intermediary files ####
-saveRDS(dds_normalised, 
-        file = snakemake@output[["normalised_counts_DESeq"]])
-
+#### Store intermediary normalised counts for preview ####
 write.table(x = counts(dds_normalised, 
                        normalized=TRUE), 
             file = snakemake@output[["normalised_counts"]], 
