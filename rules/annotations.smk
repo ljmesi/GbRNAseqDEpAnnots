@@ -7,8 +7,7 @@ rule create_annotations_db:
     output:
         protected(f"{REF}/genome.genes.sqlite")
     params:
-        script = str(SRC/"tbls"/"annotations"/"create_annotations_db.py"),
-        logging = config["software"]["utils"]["csvkit_log"]
+        str(SRC/"tbls"/"annotations"/"create_annotations_db.py")
     conda:
         f"{ENVS}/annotations.yml"
     benchmark:
@@ -17,7 +16,7 @@ rule create_annotations_db:
         LOGS/"annotations"/"create_annotations_db.log"
     shell:
         r"""
-        python {params.script} {input} {output} &> {log}
+        python {params} {input} {output} &> {log}
         """
 
 rule create_gene_universe:
