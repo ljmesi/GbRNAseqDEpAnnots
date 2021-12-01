@@ -27,19 +27,16 @@ run:
 ## clean: Remove output files
 clean:
 	$(CONDA_ACTIVATE)
-	snakemake --cores 1 --delete-all-output
-	rm -f \
-	"data/interm/DE/normalised_counts.tsv" \
-	"results/figs/DE/normalised.correlation.rlog.svg" \
-	"results/tbls/DE/shrinked_padj-filtered.tsv" \
-	"results/figs/DE/log10_cooks_distances.svg" \
-	"results/figs/DE/deseq_dispersions.svg" \
-	"results/tbls/DE/outliers.tsv", \
-	"results/figs/DE/MAplot_shrinked.svg", \
-	"results/figs/DE/volcanoplot.svg", \
-	"results/figs/DE/DE_heatmap.svg", \
-	"data/interm/DE/genelist_padj-filtered.tsv", \
-	"data/interm/GSEA/geneIDs_GOs.tsv"
+	snakemake --cores 1 --delete-all-output --verbose
+	rm -rf \
+	logs/annotations \
+	logs/DE \
+	logs/GSEA \
+	logs/summarise \
+	bmarks/annotations \
+	bmarks/DE \
+	bmarks/GSEA \
+	bmarks/summarise
 
 ## report: Make automatic snakemake report
 report:
