@@ -8,7 +8,9 @@ rule join_all_tables:
         SG = f"{TBLS}/DE/shrinked_padj-filtered.tsv",
         GFF = f"{PROC}/annotations/gff_DE_geneIDs.tsv"
     output:
-        f"{PROC}/summarise/combined-genes-GO_Fisher.tsv"
+        report(f"{TBLS}/summarise/combined-genes-GO_Fisher.tsv",
+               caption = f"{REP}/summarise/combined-genes-GO_Fisher.rst",
+               category = SUM)
     benchmark:
         BMARKS/"summarise"/"join_all_tables.tsv"
     conda:
