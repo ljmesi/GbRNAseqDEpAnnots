@@ -32,7 +32,7 @@ create_pca_plot <- function(transformed_obj, plot_title, samples){
 
   pca_plot$data <- cbind(pca_plot$data,sample_labels)
 
-  # # Add text lables to the points
+  # # Add text labels to the points
   pca_plot <- pca_plot +
     geom_text_repel(aes(label = samples))
 }
