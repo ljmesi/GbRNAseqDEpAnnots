@@ -15,16 +15,16 @@ rule all:
         #### Differential expression with DESeq2 ####
         # Sample QC and EDA
         f"{PROC}/DE/normalised_counts.tsv",
-        expand(f"{FIGS}/DE/normalised.{{eda_type}}.{{transformation_type}}.svg",
-                eda_type = ["correlation","pca"],
+        expand(f"{FIGS}/DE/{{eda_type}}.{{transformation_type}}.svg",
+                eda_type = ["gene_clustering","pca"],
                 transformation_type = ["rlog","vs"]),
         # Tables containing DE results
         expand(f"{TBLS}/DE/{{shrink_status}}_{{subsetting}}.tsv",
                 shrink_status = SHRINKAGE,
                 subsetting = ["not-filtered","padj-filtered"]),
         expand(f"{FIGS}/DE/{{transformation}}_{{plot}}.svg",
-                transformation = ["rlog","norm","vs"],
-                plot = ["count_matrix","sample-to-sample-distances"]),
+                transformation = ["rlog","vs"],
+                plot = ["count_matrix","sample_to_sample_distances"]),
 
         # DESeq Model QC plots
         f"{FIGS}/DE/log10_cooks_distances.svg",
