@@ -1,1 +1,1 @@
-Heatmap of 20 highest vs/rlog/norm (log2(n + 1)) transformed mean counts. For further information on this visualisation, please see: `DEseq2 vignette <http://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix>`_
+Heatmap of 20 highest vs/rlog transformed mean counts. For further information on this visualisation, please see: `DEseq2 vignette <http://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix>`_
