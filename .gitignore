@@ -35,6 +35,9 @@ simgs/gffread.sif
 
 # STAR-alignment raw files
 exp/submit_star_alignments/cuttrim2_SF-2243-GB-1*
+# Files related to pure pheatmap library exploration
+exp/plot_gene_clustering/explore_pheatmap.*
+exp/plot_gene_clustering/sportsref_download.*
 
 # STAR-alignment log-files
 exp/submit_star_alignments/star_*
