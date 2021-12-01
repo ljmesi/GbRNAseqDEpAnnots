@@ -25,10 +25,10 @@ rule plot_gene_clustering:
     output:
         rlog_gene_clustering_heatmap = report(f"{FIGS}/DE/gene_clustering.rlog.svg",
                                                 caption = f"{REP}/DE/rlog_gene_clustering_heatmap.rst",
-                                                category = QC_EDA),
+                                                category = QC),
         vs_gene_clustering_heatmap = report(f"{FIGS}/DE/gene_clustering.vs.svg",
                                             caption = f"{REP}/DE/vs_gene_clustering_heatmap.rst",
-                                            category = QC_EDA),
+                                            category = QC),
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#effects-of-transformations-on-the-variance
         rlog_meanSdPlot = f"{FIGS}/DE/rlog_meanSdPlot.svg",
         vs_meanSdPlot = f"{FIGS}/DE/vs_meanSdPlot.svg",
@@ -52,11 +52,11 @@ rule plot_QC_heatmaps:
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
         count_matrix = report(f"{FIGS}/DE/{{transformation}}_count_matrix.svg", 
                                 caption = f"{REP}/DE/count_matrix.rst", 
-                                category = QC_EDA),
+                                category = QC),
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-sample-to-sample-distances
         sample_to_sample_distances = report(f"{FIGS}/DE/{{transformation}}_sample_to_sample_distances.svg", 
                                             caption = f"{REP}/DE/sample_to_sample_distances.rst", 
-                                            category = QC_EDA)
+                                            category = QC)
     params:
         num_highest_means = 50
     conda:
@@ -77,10 +77,10 @@ rule plot_pca_from_transf_DESeq:
     output:
         rlog_transformed_pca = report(f"{FIGS}/DE/pca.rlog.svg",
                                         caption = f"{REP}/DE/rlog_qc_pca.rst",
-                                        category = QC_EDA),
+                                        category = QC),
         vs_transformed_pca = report(f"{FIGS}/DE/pca.vs.svg",
                                     caption = f"{REP}/DE/vs_qc_pca.rst",
-                                    category = QC_EDA)
+                                    category = QC)
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
@@ -132,7 +132,7 @@ rule plot_log10_cooks_distances:
     output:
         report(f"{FIGS}/DE/log10_cooks_distances.svg",
                caption = f"{REP}/DE/log10_cooks_distances.rst",
-               category = QC_DESEQ)
+               category = QC)
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
@@ -148,7 +148,7 @@ rule plot_dispersions:
     output:
         report(f"{FIGS}/DE/deseq_dispersions.svg",
                caption = f"{REP}/DE/dispersions.rst",
-               category = QC_DESEQ)
+               category = QC)
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
@@ -167,7 +167,7 @@ rule find_outliers:
     output:
         table_outliers = report(f"{TBLS}/DE/outliers.tsv", 
                                 caption = f"{REP}/DE/outliers.rst",
-                                category = DE)
+                                category = QC)
     params:
         p_adj_limit = padj_limit,
         contrast = config["DE"]["contrasts"],

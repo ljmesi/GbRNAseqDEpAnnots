@@ -29,10 +29,9 @@ PROC = 'data/interm'
 
 # Report categories
 DE = "DE analysis results"
-QC_EDA = "QC and EDA"
-QC_DESEQ = "QC of DESeq model fit"
+QC = "QC"
 GSEA = "GSEA"
-SUM = "Summarise results"
+SUM = "Final results"
 
 # Common variables for rule all targets
 SHRINKAGE = ["not-shrinked","shrinked"]
