@@ -20,33 +20,30 @@ rule read_normalise_counts:
 
 #### QC and EDA ####
 
-rule plot_correlation_heatmaps_from_transf_DESeq:
+rule plot_gene_clustering:
     input:
-        normalised_counts_DESeq = f"{PROC}/DE/DESeq_normalised.RDS",
-        metadata = config["DE"]["Experimental_design"]
+        DESeq_counts = f"{PROC}/DE/DESeq_raw.RDS"
     output:
-        rlog_transformed_corr_heatmap = report(f"{FIGS}/DE/normalised.correlation.rlog.svg",
-                                                caption = f"{REP}/DE/rlog_correlation_heatmap.rst",
+        rlog_gene_clustering_heatmap = report(f"{FIGS}/DE/gene_clustering.rlog.svg",
+                                                caption = f"{REP}/DE/rlog_gene_clustering_heatmap.rst",
                                                 category = QC_EDA),
-        vs_transformed_corr_heatmap = report(f"{FIGS}/DE/normalised.correlation.vs.svg",
-                                            caption = f"{REP}/DE/vs_correlation_heatmap.rst",
+        vs_gene_clustering_heatmap = report(f"{FIGS}/DE/gene_clustering.vs.svg",
+                                            caption = f"{REP}/DE/vs_gene_clustering_heatmap.rst",
                                             category = QC_EDA),
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#effects-of-transformations-on-the-variance
         rlog_meanSdPlot = f"{FIGS}/DE/rlog_meanSdPlot.svg",
         vs_meanSdPlot = f"{FIGS}/DE/vs_meanSdPlot.svg",
-        norm_meanSdPlot = f"{FIGS}/DE/norm_meanSdPlot.svg",
         # Transformed data for further use
         rlog_transformed = f"{PROC}/DE/rlog_transformed.RDS",
-        vs_transformed = f"{PROC}/DE/vs_transformed.RDS",
-        norm_transformed = f"{PROC}/DE/norm_transformed.RDS"
+        vs_transformed = f"{PROC}/DE/vs_transformed.RDS"
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
-        BMARKS/"DE"/"plot_correlation_heatmaps_from_transf_DESeq.tsv"
+        BMARKS/"DE"/"plot_gene_clustering.tsv"
     log: 
-        LOGS/"DE"/"plot_correlation_heatmaps_from_transf_DESeq.log"
+        LOGS/"DE"/"plot_gene_clustering.log"
     script:
-        str(SRC/"vis"/"DE"/"plot_correlation_heatmap_transform_DESeq.R")
+        str(SRC/"vis"/"DE"/"plot_gene_clustering_transform_DESeq.R")
 
 
 rule plot_QC_heatmaps:
