@@ -1,0 +1,1 @@
+Principal components analysis of rlog transformed median of ratios normalised transcript counts. For further information on this visualisation, please see: `DEseq2 vignette <https://www.bioconductor.org/packages/devel/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#principal-component-plot-of-the-samples>`_

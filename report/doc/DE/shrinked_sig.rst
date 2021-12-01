@@ -1,0 +1,1 @@
+Table of DESeq2's DE results of genes with `shrunken <https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#log-fold-change-shrinkage-for-visualization-and-ranking>`_ log2fold change values which are subset to only those with adjusted p-value less than {{ snakemake.params.p_adj_limit }}. 

@@ -1,0 +1,1 @@
+This table contains the genes which were flagged as outliers by DESeq2 using Cook's distance.

@@ -1,0 +1,1 @@
+Boxplot of the log10 of cooks distances of all samples. For further information, please see: `DEseq2 vignette <https://www.bioconductor.org/packages/devel/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#approach-to-count-outliers>`_

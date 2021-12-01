@@ -1,0 +1,1 @@
+Volcano plot illustrating the differential expression. Positive log2fold change values correspond to higher expression levels in 18/6 photoperiod (numerator level in DESeq contrast) and negative to higher levels in 12/12 photoperiod (denominator level in DESeq contrast).

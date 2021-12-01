@@ -1,0 +1,1 @@
+Here is MAplot of either log2fold shrinked or non-shrinked expression values. See which one from the figure's file name. For further information on MA plots, please see: `DEseq2 vignette <https://www.bioconductor.org/packages/devel/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#ma-plot>`_
