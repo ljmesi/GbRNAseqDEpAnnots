@@ -54,7 +54,7 @@ rule all:
 
         #### Final parts of pipeline (join all data into one large table) ####
         f"{PROC}/summarise/combined-genes-GO_Fisher.tsv",
-        f"{TBLS}/summarise/all_compressed.tsv"
+        f"{TBLS}/summarise/each_gene_in_one_row.tsv"
 
 #### Analysis modules ####
 

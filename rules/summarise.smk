@@ -23,11 +23,11 @@ rule one_row_per_geneID:
     input:
         f"{PROC}/summarise/combined-genes-GO_Fisher.tsv"
     output:
-        report(f"{TBLS}/summarise/all_compressed.tsv",
-               caption = f"{REP}/summarise/tsv_compressed.rst",
+        report(f"{TBLS}/summarise/each_gene_in_one_row.tsv",
+               caption = f"{REP}/summarise/each_gene_in_one_row.rst",
                category = SUM)
     params:
-        str(SRC/"tbls"/"summarise"/"compress_to_one_row.py")
+        str(SRC/"tbls"/"summarise"/"each_gene_in_one_row.py")
     benchmark:
         f"{BMARKS}/summarise/one_row_per_geneID.tsv"
     log:
