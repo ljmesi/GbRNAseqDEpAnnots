@@ -59,7 +59,7 @@ rule plot_QC_heatmaps:
         caption = f"{REP}/DE/sample_to_sample_distances.rst",
         category = QC_EDA)
     params:
-        f"{PROC}/DE/DESeq_normalised.RDS"
+        num_highest_means = 50
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
