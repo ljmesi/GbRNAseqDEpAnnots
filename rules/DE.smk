@@ -6,7 +6,6 @@ rule read_normalise_counts:
         experiment_metadata = config["DE"]["Experimental_design"]
     output:
         DESeq_obj = f"{PROC}/DE/DESeq_raw.RDS",
-        normalised_counts_DESeq = f"{PROC}/DE/DESeq_normalised.RDS",
         normalised_counts = f"{PROC}/DE/normalised_counts.tsv"
     conda:
         f"{ENVS}/DE.yml"
@@ -51,13 +50,13 @@ rule plot_QC_heatmaps:
         f"{PROC}/DE/{{transformation}}_transformed.RDS"
     output:
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
-        count_matrix = report(f"{FIGS}/DE/{{transformation}}_count_matrix.svg",
-        caption = f"{REP}/DE/count_matrix.rst",
-        category = QC_EDA),
+        count_matrix = report(f"{FIGS}/DE/{{transformation}}_count_matrix.svg", 
+                                caption = f"{REP}/DE/count_matrix.rst", 
+                                category = QC_EDA),
         # see https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-sample-to-sample-distances
-        sample_to_sample_distances = report(f"{FIGS}/DE/{{transformation}}_sample-to-sample-distances.svg",
-        caption = f"{REP}/DE/sample_to_sample_distances.rst",
-        category = QC_EDA)
+        sample_to_sample_distances = report(f"{FIGS}/DE/{{transformation}}_sample_to_sample_distances.svg", 
+                                            caption = f"{REP}/DE/sample_to_sample_distances.rst", 
+                                            category = QC_EDA)
     params:
         num_highest_means = 50
     conda:
@@ -118,7 +117,7 @@ rule execute_DE:
     benchmark:
         BMARKS/"DE"/"execute_DE.tsv"
     threads:
-        config["software"]["threads"]["DEseq2"]
+        config["threads"]["DEseq2"]
     log:
         LOGS/"DE"/"execute_DE.log"
     script:
@@ -178,7 +177,7 @@ rule find_outliers:
     benchmark:
         BMARKS/"DE"/"find_outliers.tsv"
     threads: 
-        config["software"]["threads"]["DEseq2"]
+        config["threads"]["DEseq2"]
     log: 
         LOGS/"DE"/"outliers.log"
     script:
@@ -199,8 +198,6 @@ rule plot_MAplot:
         f"{ENVS}/DE.yml"
     benchmark:
         BMARKS/"DE"/"plot_MAplot_{{shrink_status}}.tsv"
-    threads: 
-        config["software"]["threads"]["default"]
     log: 
         LOGS/"DE"/"MAplot_{{shrink_status}}.log"
     script:
@@ -221,8 +218,6 @@ rule plot_volcano:
         f"{ENVS}/DE.yml"
     benchmark:
         BMARKS/"DE"/"plot_volcano.tsv"
-    threads: 
-        config["software"]["threads"]["default"]
     log: 
         LOGS/"DE"/"plot_volcano.log"
     script:
@@ -244,8 +239,6 @@ rule plot_DE_heatmap:
         f"{ENVS}/DE.yml"
     benchmark:
         BMARKS/"DE"/"plot_DE_heatmap.tsv"
-    threads: 
-        config["software"]["threads"]["default"]
     log: 
         LOGS/"DE"/"DE_heatmap.log"
     script:
