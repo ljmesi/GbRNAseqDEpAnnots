@@ -1,6 +1,6 @@
 
 # exp_des = (pd.read_table(config["DE"]["Experimental_design"])
-#              .set_index(config["DE"]["Exp_design_unique_column"], 
+#              .set_index("Sample_ID", 
 #                         drop=False))
 # validate(exp_des, schema = "../schemas/Experimental_design.schema.yaml")
 
