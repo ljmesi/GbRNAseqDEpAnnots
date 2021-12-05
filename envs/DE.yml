@@ -14,3 +14,4 @@ dependencies:
   - r-svglite = 2.0.0
   - r-here = 1.0.1
   - r-renv = 0.14.0
+  - bioconductor-enhancedvolcano = 1.12.0
