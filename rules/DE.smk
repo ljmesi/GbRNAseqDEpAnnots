@@ -206,9 +206,11 @@ rule plot_MAplot:
 
 rule plot_volcano:
     input:
-        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS"
+        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
+        gene_annotations = f"{TBLS}/summarise/each_gene_in_one_row.tsv"
     output:
-        volcano_plot = report(f"{FIGS}/DE/volcanoplot.svg",
+        volcano_plot = f"{FIGS}/DE/volcanoplot_sketch.svg",
+        volcano_plot_pub = report(f"{FIGS}/DE/volcanoplot.svg",
                                 caption = f"{REP}/DE/volcanoplot.rst",
                                 category = DE)
     params:
