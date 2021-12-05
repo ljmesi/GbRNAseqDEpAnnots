@@ -1,0 +1,183 @@
+---
+title: "Testing EnhancedVolcano"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+Source: https://bioconductor.org/packages/release/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html 
+
+```{r}
+suppressPackageStartupMessages({
+library(EnhancedVolcano)
+library(airway)
+library(magrittr)
+library(org.Hs.eg.db)
+library('DESeq2')
+})
+```
+
+
+```{r}
+data('airway')
+airway$dex %<>% relevel('untrt')
+```
+
+
+```{r}
+ens <- rownames(airway)
+symbols <- mapIds(org.Hs.eg.db, keys = ens,
+  column = c('SYMBOL'), keytype = 'ENSEMBL')
+```
+
+
+```{r}
+symbols[1:10]
+symbols <- symbols[!is.na(symbols)]
+symbols <- symbols[match(rownames(airway), names(symbols))]
+rownames(airway) <- symbols
+keep <- !is.na(rownames(airway))
+airway <- airway[keep,]
+```
+
+```{r}
+dds <- DESeqDataSet(airway, design = ~ cell + dex)
+dds <- DESeq(dds, betaPrior=FALSE)
+res <- results(dds,
+  contrast = c('dex','trt','untrt'))
+res <- lfcShrink(dds,
+  contrast = c('dex','trt','untrt'), res=res, type = 'normal')
+```
+
+
+```{r}
+EnhancedVolcano(res,
+  lab = rownames(res),
+  x = 'log2FoldChange',
+  y = 'pvalue')
+```
+
+```{r}
+EnhancedVolcano(res,
+  lab = rownames(res),
+  x = 'log2FoldChange',
+  y = 'pvalue',
+  title = 'N061011 versus N61311',
+  pCutoff = 10e-32,
+  FCcutoff = 0.5,
+  pointSize = 3.0,
+  labSize = 6.0)
+```
+
+```{r}
+EnhancedVolcano(res,
+  lab = rownames(res),
+  x = 'log2FoldChange',
+  y = 'pvalue',
+  title = 'N061011 versus N61311',
+  pCutoff = 10e-16,
+  FCcutoff = 1.5,
+  pointSize = 3.0,
+  labSize = 6.0,
+  col=c('black', 'black', 'black', 'red3'),
+  colAlpha = 1)
+```
+
+```{r}
+EnhancedVolcano(res,
+    lab = rownames(res),
+    x = 'log2FoldChange',
+    y = 'pvalue',
+    title = 'N061011 versus N61311',
+    pCutoff = 10e-16,
+    FCcutoff = 1.5,
+    pointSize = 4.0,
+    labSize = 6.0,
+    shape = 8,
+    colAlpha = 1)
+```
+
+
+```{r}
+EnhancedVolcano(res,
+  lab = rownames(res),
+  x = 'log2FoldChange',
+  y = 'pvalue',
+  title = 'N061011 versus N61311',
+  pCutoff = 10e-16,
+  FCcutoff = 1.5,
+  pointSize = 3.0,
+  labSize = 6.0,
+  shape = c(1, 4, 23, 25),
+  colAlpha = 1)
+```
+
+
+```{r}
+EnhancedVolcano(res,
+    lab = rownames(res),
+    x = 'log2FoldChange',
+    y = 'pvalue',
+    xlim = c(-6, 6),
+    title = 'N061011 versus N61311',
+    pCutoff = 10e-12,
+    FCcutoff = 1.5,
+    pointSize = 3.0,
+    labSize = 6.0,
+    colAlpha = 1,
+    cutoffLineType = 'blank',
+    cutoffLineCol = 'black',
+    cutoffLineWidth = 0.8,
+    hline = c(10e-20,
+      10e-20 * 10e-30,
+      10e-20 * 10e-60,
+      10e-20 * 10e-90),
+    hlineCol = c('pink', 'hotpink', 'purple', 'black'),
+    hlineType = c('solid', 'longdash', 'dotdash', 'dotted'),
+    hlineWidth = c(1.0, 1.5, 2.0, 2.5),
+    gridlines.major = FALSE,
+    gridlines.minor = FALSE)
+```
+
+
+```{r}
+EnhancedVolcano(res,
+  lab = rownames(res),
+  x = 'log2FoldChange',
+  y = 'pvalue',
+  pCutoff = 10e-12,
+  FCcutoff = 1.5,
+  cutoffLineType = 'twodash',
+  cutoffLineWidth = 0.8,
+  pointSize = 4.0,
+  labSize = 6.0,
+  colAlpha = 1,
+  legendLabels=c('Not sig.','Log (base 2) FC','p-value',
+    'p-value & Log (base 2) FC'),
+  legendPosition = 'right',
+  legendLabSize = 16,
+  legendIconSize = 5.0)
+```
+
+
+```{r}
+EnhancedVolcano(res,
+  lab = rownames(res),
+  x = 'log2FoldChange',
+  y = 'pvalue',
+  xlab = bquote(~Log[2]~ 'fold change'),
+  pCutoff = 10e-32,
+  FCcutoff = 2.0,
+  pointSize = 4.0,
+  labSize = 6.0,
+  colAlpha = 1,
+  legendPosition = 'right',
+  legendLabSize = 12,
+  legendIconSize = 4.0,
+  drawConnectors = TRUE,
+  widthConnectors = 0.75)
+```
+
+
+
