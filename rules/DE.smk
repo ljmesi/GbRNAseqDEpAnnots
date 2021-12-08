@@ -98,15 +98,15 @@ rule execute_DE:
         DESeq_raw = f"{PROC}/DE/DESeq_raw.RDS"
     output:
         DESeq_analysis_obj = f"{PROC}/DE/DESeq-obj.RDS",
-        DESeq_results_non_shrinked = f"{PROC}/DE/not-shrinked.RDS",
-        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
-        tbl_non_shrinked = f"{TBLS}/DE/not-shrinked_not-filtered.tsv",
-        tbl_non_shrinked_padj_filtered = f"{TBLS}/DE/not-shrinked_padj-filtered.tsv",
-        tbl_shrinked = report(f"{TBLS}/DE/shrinked_not-filtered.tsv", 
-                                caption = f"{REP}/DE/shrinked.rst",
+        DESeq_results_non_shrunken = f"{PROC}/DE/not-shrunken.RDS",
+        DESeq_results_shrunken = f"{PROC}/DE/shrunken.RDS",
+        tbl_non_shrunken = f"{TBLS}/DE/not-shrunken_not-filtered.tsv",
+        tbl_non_shrunken_padj_filtered = f"{TBLS}/DE/not-shrunken_padj-filtered.tsv",
+        tbl_shrunken = report(f"{TBLS}/DE/shrunken_not-filtered.tsv", 
+                                caption = f"{REP}/DE/shrunken.rst",
                                 category = DE),
-        tbl_shrinked_padj_filtered = report(f"{TBLS}/DE/shrinked_padj-filtered.tsv",
-                                    caption = f"{REP}/DE/shrinked_sig.rst",
+        tbl_shrunken_padj_filtered = report(f"{TBLS}/DE/shrunken_padj-filtered.tsv",
+                                    caption = f"{REP}/DE/shrunken_sig.rst",
                                     category = DE),
     params:
         p_adj_limit = padj_limit,
@@ -160,7 +160,7 @@ rule plot_dispersions:
 
 rule find_outliers:
     input:
-        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
+        DESeq_results_shrunken = f"{PROC}/DE/shrunken.RDS",
         DESeq_analysis_obj = f"{PROC}/DE/DESeq-obj.RDS",
         raw_counts = f"{RAW}/all_ReadsPerGene.out.tsv",
         metadata = config["DE"]["Experimental_design"]
@@ -193,7 +193,7 @@ rule plot_MAplot:
                         caption = f"{REP}/DE/MAplots.rst",
                         category = DE)
     wildcard_constraints:
-        shrink_status="(not-shrinked)|(shrinked)"
+        shrink_status="(not-shrunken)|(shrunken)"
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
@@ -206,7 +206,7 @@ rule plot_MAplot:
 
 rule plot_volcano:
     input:
-        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
+        DESeq_results_shrunken = f"{PROC}/DE/shrunken.RDS",
         gene_annotations = f"{TBLS}/summarise/each_gene_in_one_row.tsv"
     output:
         volcano_plot = f"{FIGS}/DE/volcanoplot_sketch.svg",
@@ -229,7 +229,7 @@ rule plot_volcano:
 rule plot_DE_heatmap:
     input:
         normalised_counts = f"{PROC}/DE/normalised_counts.tsv",
-        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
+        DESeq_results_shrunken = f"{PROC}/DE/shrunken.RDS",
         metadata = config["DE"]["Experimental_design"]
     output:
         DE_heatmap = report(f"{FIGS}/DE/DE_heatmap.svg",

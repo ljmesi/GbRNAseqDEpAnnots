@@ -2,7 +2,7 @@
 
 rule assign_GO_terms_to_geneIDs:
     input:
-        sigGenelist = f"{TBLS}/DE/shrinked_padj-filtered.tsv",
+        sigGenelist = f"{TBLS}/DE/shrunken_padj-filtered.tsv",
         geneGOmappings = f"{PROC}/annotations/geneIDs_GOs.tsv"
     output:
         f"{TBLS}/GSEA/GO-genes_list_{{GO_category}}_Fisher.tsv"
@@ -46,7 +46,7 @@ rule expand_genes:
 
 rule plot_GO_terms:
     input:
-        sigGenelist = f"{TBLS}/DE/shrinked_padj-filtered.tsv",
+        sigGenelist = f"{TBLS}/DE/shrunken_padj-filtered.tsv",
         geneGOmappings = f"{PROC}/annotations/geneIDs_GOs.tsv"
     output:
         GO_graph = report(f"{FIGS}/GSEA/{{GO_category}}_Fisher_{{algo}}.svg",

@@ -5,7 +5,7 @@ rule join_all_tables:
         BP = f"{TBLS}/GSEA/genes-GO_BP_Fisher.tsv",
         CC = f"{TBLS}/GSEA/genes-GO_CC_Fisher.tsv",
         MF = f"{TBLS}/GSEA/genes-GO_MF_Fisher.tsv",
-        SG = f"{TBLS}/DE/shrinked_padj-filtered.tsv",
+        SG = f"{TBLS}/DE/shrunken_padj-filtered.tsv",
         GFF = f"{PROC}/annotations/gff_DE_geneIDs.tsv"
     output:
         report(f"{TBLS}/summarise/combined-genes-GO_Fisher.tsv",

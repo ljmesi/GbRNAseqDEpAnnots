@@ -56,7 +56,7 @@ padj_limit <- snakemake@params[["p_adj_limit"]]
 print("Adjusted p-value limit used:")
 padj_limit
 
-results <- readRDS(snakemake@input[["DESeq_results_shrinked"]])
+results <- readRDS(snakemake@input[["DESeq_results_shrunken"]])
 
 topGeneNumber <- snakemake@params[["volcano_top_genes"]]
 
@@ -103,7 +103,7 @@ ggsave(
 )
 
 # Redo volcano plot
-res <- readRDS(snakemake@input[["DESeq_results_shrinked"]])
+res <- readRDS(snakemake@input[["DESeq_results_shrunken"]])
 row_names <- rownames(res)
 
 gene_annotations_df <- read.table(

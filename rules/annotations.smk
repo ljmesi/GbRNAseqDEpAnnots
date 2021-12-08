@@ -42,7 +42,7 @@ rule create_gene_universe:
 rule add_gff_annotations:
     input:
         sqlite = f"{REF}/genome.genes.sqlite",
-        de_data = f"{TBLS}/DE/shrinked_padj-filtered.tsv"
+        de_data = f"{TBLS}/DE/shrunken_padj-filtered.tsv"
     output:
         f"{PROC}/annotations/gff_DE_geneIDs.tsv"
     params:

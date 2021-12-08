@@ -16,7 +16,7 @@ suppressPackageStartupMessages({
 
 
 ```{r}
-res <- readRDS("shrinked.RDS")
+res <- readRDS("shrunken.RDS")
 row_names <- rownames(res)
 gene_annotations_df <- read.table(file = 'each_gene_in_one_row.tsv', sep = '\t', header = TRUE, stringsAsFactors = FALSE)
 
