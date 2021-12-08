@@ -23,6 +23,7 @@ rule all:
         expand(f"{FIGS}/DE/{{transformation}}_{{plot}}.svg",
                 transformation = ["rlog","vs"],
                 plot = ["count_matrix","sample_to_sample_distances"]),
+        f"{FIGS}/DE/vs_qc_sample_to_sample_distances.svg",
         f"{FIGS}/DE/log10_cooks_distances.svg",
         f"{FIGS}/DE/deseq_dispersions.svg",
         f"{TBLS}/DE/outliers.tsv",

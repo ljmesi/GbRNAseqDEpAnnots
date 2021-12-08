@@ -45,6 +45,23 @@ rule plot_gene_clustering:
         str(SRC/"vis"/"DE"/"plot_gene_clustering_transform_DESeq.R")
 
 
+rule plot_vs_QC_heatmap:
+    input:
+        f"{PROC}/DE/vs_transformed.RDS"
+    output:
+        f"{FIGS}/DE/vs_qc_sample_to_sample_distances.svg"
+    params:
+        num_highest_means = 50
+    conda:
+        f"{ENVS}/DE.yml"
+    benchmark:
+        BMARKS/"DE"/"plot_vs_QC_heatmap.tsv"
+    log: 
+        LOGS/"DE"/"plot_vs_QC_heatmap.log"
+    script:
+        str(SRC/"vis"/"DE"/"plot_vs_QC_heatmap.R")
+
+
 rule plot_QC_heatmaps:
     input:
         f"{PROC}/DE/{{transformation}}_transformed.RDS"
