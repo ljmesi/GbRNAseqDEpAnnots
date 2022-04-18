@@ -79,9 +79,9 @@ rule plot_QC_heatmaps:
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
-        BMARKS/"DE"/"{{transformation}}_plot_QC_heatmaps.tsv"
+        BMARKS/"DE"/"{transformation}_plot_QC_heatmaps.tsv"
     log: 
-        LOGS/"DE"/"{{transformation}}_plot_QC_heatmaps.log"
+        LOGS/"DE"/"{transformation}_plot_QC_heatmaps.log"
     script:
         str(SRC/"vis"/"DE"/"plot_QC_heatmaps.R")
 
@@ -120,10 +120,10 @@ rule execute_DE:
         tbl_non_shrunken = f"{TBLS}/DE/not-shrunken_not-filtered.tsv",
         tbl_non_shrunken_padj_filtered = f"{TBLS}/DE/not-shrunken_padj-filtered.tsv",
         tbl_shrunken = report(f"{TBLS}/DE/shrunken_not-filtered.tsv", 
-                                caption = f"{REP}/DE/shrunken.rst",
+                                caption = f"{REP}/DE/shrinked.rst",
                                 category = DE),
         tbl_shrunken_padj_filtered = report(f"{TBLS}/DE/shrunken_padj-filtered.tsv",
-                                    caption = f"{REP}/DE/shrunken_sig.rst",
+                                    caption = f"{REP}/DE/shrinked_sig.rst",
                                     category = DE),
     params:
         p_adj_limit = padj_limit,
@@ -148,8 +148,8 @@ rule plot_log10_cooks_distances:
         DESeq_analysis_obj = f"{PROC}/DE/DESeq-obj.RDS"
     output:
         report(f"{FIGS}/DE/log10_cooks_distances.svg",
-               caption = f"{REP}/DE/log10_cooks_distances.rst",
-               category = QC)
+                caption = f"{REP}/DE/log10_cooks_distances.rst",
+                category = QC)
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
@@ -164,8 +164,8 @@ rule plot_dispersions:
         DESeq_analysis_obj = f"{PROC}/DE/DESeq-obj.RDS"
     output:
         report(f"{FIGS}/DE/deseq_dispersions.svg",
-               caption = f"{REP}/DE/dispersions.rst",
-               category = QC)
+                caption = f"{REP}/DE/dispersions.rst",
+                category = QC)
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
@@ -214,9 +214,9 @@ rule plot_MAplot:
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
-        BMARKS/"DE"/"plot_MAplot_{{shrink_status}}.tsv"
+        BMARKS/"DE"/"plot_MAplot_{shrink_status}.tsv"
     log: 
-        LOGS/"DE"/"MAplot_{{shrink_status}}.log"
+        LOGS/"DE"/"MAplot_{shrink_status}.log"
     script:
         str(SRC/"vis"/"DE"/"plot_MAplot.R")
 
