@@ -53,16 +53,17 @@ replace_gene_IDs_with_gene_symbols <- function(indexes_of_DE_genes, all_geneIDs,
 
 
 padj_limit <- snakemake@params[["p_adj_limit"]]
-print("Adjusted p-value limit used:")
-padj_limit
+print(cat("Adjusted p-value limit used: ", padj_limit)
 
 results <- readRDS(snakemake@input[["DESeq_results_shrunken"]])
-
-topGeneNumber <- snakemake@params[["volcano_top_genes"]]
 
 # Add a column labeling whether the gene is significant
 #threshold_OE <- results$padj < padj_limit 
 results$threshold <- results$padj < padj_limit 
+# Count how many TRUE values were found
+topGeneNumber <- sum(results$threshold, na.rm = TRUE)
+print(cat("How many are there which pass the adjusted p-value threshold of ", padj_limit, ":"))
+print(topGeneNumber)
 
 res_ordered <- results[order(results$padj), ]
 

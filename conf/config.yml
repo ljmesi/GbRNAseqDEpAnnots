@@ -2,7 +2,6 @@
 DE:
     Experimental_design: "conf/experiment_metadata.tsv"
     p-adj: 0.01
-    volcano_top_genes: 96
     pAdjustMethod: "bonferroni"
     # Contrasts for the deseq2 results method
     contrasts:

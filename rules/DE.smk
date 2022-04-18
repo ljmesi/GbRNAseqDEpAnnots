@@ -231,8 +231,7 @@ rule plot_volcano:
                                 caption = f"{REP}/DE/volcanoplot.rst",
                                 category = DE)
     params:
-        p_adj_limit = padj_limit,
-        volcano_top_genes = config["DE"]["volcano_top_genes"]
+        p_adj_limit = padj_limit
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
