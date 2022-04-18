@@ -4,10 +4,12 @@ suppressPackageStartupMessages(library(here))
 
 snakemake@source(here("src","utils","logging.R"))
 
+suppressPackageStartupMessages({
 library(DESeq2)
 library(tidyverse)
 library(ggrepel)
 library(EnhancedVolcano)
+})
 
 snakemake@source(here("src","utils","fig_params.R"))
 
