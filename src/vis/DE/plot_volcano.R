@@ -5,10 +5,10 @@ suppressPackageStartupMessages(library(here))
 snakemake@source(here("src","utils","logging.R"))
 
 suppressPackageStartupMessages({
-library(DESeq2)
-library(tidyverse)
-library(ggrepel)
-library(EnhancedVolcano)
+  library(DESeq2)
+  library(tidyverse)
+  library(ggrepel)
+  library(EnhancedVolcano)
 })
 
 snakemake@source(here("src","utils","fig_params.R"))
@@ -61,7 +61,7 @@ results <- readRDS(snakemake@input[["DESeq_results_shrunken"]])
 
 # Add a column labeling whether the gene is significant
 #threshold_OE <- results$padj < padj_limit 
-results$threshold <- results$padj < padj_limit 
+results$threshold <- results$padj < padj_limit
 # Count how many TRUE values were found
 topGeneNumber <- sum(results$threshold, na.rm = TRUE)
 print(cat("How many are there which pass the adjusted p-value threshold of ", padj_limit, ":"))
@@ -77,13 +77,16 @@ res_ordered$genelabels[1:topGeneNumber] <-
 
 # Plot volcano
 res_ordered <- as_tibble(res_ordered)
+# Remove NAs from padj column
+res_ordered <- drop_na(res_ordered, padj)
 plot <- ggplot(res_ordered) +
   geom_point(aes(x = log2FoldChange, 
-                 y = -log10(padj), 
-                 colour = threshold)) +
+                  y = -log10(padj), 
+                  colour = threshold)) +
   geom_text_repel(aes(x = log2FoldChange, 
                       y = -log10(padj), 
-                      label = genelabels)) +
+                      label = genelabels),
+                  max.overlaps = Inf) +
   ggtitle("Overexpression of genes") +
   xlab("log2 fold change") + 
   ylab("-log10 transformed adjusted p-value") +
@@ -137,9 +140,9 @@ EnhancedVolcano(res,
   subtitle = "",
   legendPosition = 'right',
   legendLabels=c(' Not sig.',
-                 bquote(~Log[2]~'FC'), 
-                 ' p-value',
-                 bquote(' p-value &' ~Log[2]~'FC')),
+                  bquote(~Log[2]~'FC'), 
+                  ' p-value',
+                  bquote(' p-value &' ~Log[2]~'FC')),
   legendLabSize = 12,
   col = c("#000000", "#E69F00", "#56B4E9", "#882255"),
   drawConnectors = TRUE,
