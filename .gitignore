@@ -31,7 +31,7 @@ exp/explore_topGO/test_data
 exp/explore_topGO/test_results/*
 
 # Singularity container images
-simgs/gffread.sif
+simgs/*.sif
 
 # STAR-alignment raw files
 exp/submit_star_alignments/cuttrim2_SF-2243-GB-1*
@@ -41,6 +41,9 @@ exp/plot_gene_clustering/sportsref_download.*
 
 # STAR-alignment log-files
 exp/submit_star_alignments/star_*
+
+# STAR-index
+exp/submit_star_alignments/starIndex
 
 # Uppmax conda environment
 envs/collate_counts
