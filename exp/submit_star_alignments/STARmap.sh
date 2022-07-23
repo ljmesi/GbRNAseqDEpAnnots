@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH -A snic2021-5-195
+#SBATCH -A snic2022-5-328
 #SBATCH -o star_mapping_softmasked_%j.out
 #SBATCH -J star_mapping_softmasked
 #SBATCH -p core -c 10
