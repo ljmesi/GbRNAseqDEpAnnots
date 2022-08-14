@@ -5,6 +5,8 @@ data/ref/*
 temp
 
 .snakemake
+.vscode
+.spyproject
 
 bmarks/*
 !bmarks/README.md
@@ -15,10 +17,6 @@ logs/*
 
 # Renv internals
 exp/explore_GenomicRanges/renv/*
-
-# Ignore old raw test counts data
-exp/collate_counts/STAR_counts/*
-exp/collate_counts/all_samples_genes_count.tsv
 
 # Ignore checkpoints
 exp/**/.ipynb_checkpoints
@@ -34,13 +32,15 @@ exp/explore_topGO/test_results/*
 simgs/*.sif
 
 # STAR-alignment raw files
-exp/submit_star_alignments/cuttrim2_SF-2243-GB-1*
+exp/submit_star_alignments/cuttrim2_SF-2243-GB-1*-*_S4*_L002/
+!exp/submit_star_alignments/cuttrim2_SF-2243-GB-1*/ReadsPerGene.out.tab
+
 # Files related to pure pheatmap library exploration
 exp/plot_gene_clustering/explore_pheatmap.*
 exp/plot_gene_clustering/sportsref_download.*
 
 # STAR-alignment log-files
-exp/submit_star_alignments/star_*
+exp/submit_star_alignments/star_*.out
 
 # STAR-index
 exp/submit_star_alignments/starIndex
