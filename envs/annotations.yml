@@ -4,5 +4,7 @@ channels:
   - bioconda
 dependencies:
   - gffutils = 0.10.1
-  - pandas = 1.3.4
+  - pandas = 1.4.3
   - click = 8.0.3
+  - python = 3.10
+  - plotly = 5.9.0

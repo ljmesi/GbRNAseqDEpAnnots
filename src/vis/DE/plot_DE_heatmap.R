@@ -39,7 +39,7 @@ annotation %<>% remove_rownames %>% column_to_rownames(var = "sample_names")
 
 
 # Obtain the normalised count values of DE genes
-results <- readRDS(snakemake@input[["DESeq_results_shrunken"]])
+results <- readRDS(snakemake@input[["DESeq_results_shrinked"]])
 
 # The genelabels column should be now filled fully
 # because it is needed in subsetting normalised_counts

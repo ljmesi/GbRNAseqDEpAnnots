@@ -10,33 +10,36 @@ clean \
 report \
 help
 
-# The conda env definition file "env.yml" is located in the project's root directory
-CONDA_ENV_NAME = snakemake
-# Note that the extra activate is needed to ensure that the activate floats env to the front of PATH
-CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate $(CONDA_ENV_NAME)
+# The conda env definition file "requirements.yml" is located in the project's root directory
+CURRENT_CONDA_ENV_NAME = snakemake
+ACTIVATE_CONDA = source $$(conda info --base)/etc/profile.d/conda.sh
+CONDA_ACTIVATE = $(ACTIVATE_CONDA) ; conda activate ; conda activate $(CURRENT_CONDA_ENV_NAME)
 
-#ARGS = --rerun-incomplete
+
+ARGS = --forceall
 
 ## run: Run the snakemake pipeline
 run:
 	$(CONDA_ACTIVATE)
-	snakemake $(ARGS) \
+	rm -f data/interm/annotations/geneIDs_GOs.tsv
+	snakemake \
+	--use-conda \
 	--cores 7 \
-	--use-conda 
+	$(ARGS)
 
 ## clean: Remove output files
 clean:
 	$(CONDA_ACTIVATE)
 	snakemake --cores 1 --delete-all-output --verbose
-	rm -rf \
-	logs/annotations \
-	logs/DE \
-	logs/GSEA \
-	logs/summarise \
-	bmarks/annotations \
-	bmarks/DE \
-	bmarks/GSEA \
-	bmarks/summarise
+	cp logs/README.md log_readme.md
+	cp bmarks/README.md bmark.readme.md
+	rm --recursive --force --verbose \
+	logs/* \
+	bmarks/*
+	mkdir -p logs bmarks
+	mv log_readme.md logs/README.md
+	mv bmark.readme.md bmarks/README.md
+
 
 ## report: Make automatic snakemake report
 report:
@@ -53,3 +56,8 @@ summary:
 ## help: Show this message
 help:
 	@grep '^##' ./Makefile
+
+## update_env: Update conda environment to the latest version defined by env.yml file
+update_env:
+	$(ACTIVATE_CONDA)
+	mamba env update --file env.yml

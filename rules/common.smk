@@ -33,8 +33,5 @@ QC = "QC"
 GSEA = "GSEA"
 SUM = "Final results"
 
-# Common variables for rule all targets
-SHRINKAGE = ["not-shrunken","shrunken"]
-
 # In case p-adj is given by the user convert it to float
 padj_limit = float(config["DE"]["p-adj"])

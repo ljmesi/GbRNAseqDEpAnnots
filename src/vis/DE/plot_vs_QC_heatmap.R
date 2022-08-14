@@ -25,10 +25,10 @@ svg(snakemake@output[[1]],
 
 
 pheatmap(sampleDistMatrix,
-         clustering_distance_rows=sampleDists,
-         clustering_distance_cols=sampleDists,
-         col=colors, 
-         show_colnames = TRUE,
-         show_rownames = TRUE)
+        clustering_distance_rows=sampleDists,
+        clustering_distance_cols=sampleDists,
+        col=colors, 
+        show_colnames = TRUE,
+        show_rownames = TRUE)
 
 dev.off()

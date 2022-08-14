@@ -3,9 +3,9 @@
 
 rule create_annotations_db:
     input:
-        f"{REF}/genome.genes.gff3"
+        f"{REF}/genome.genes.flybasewithcurated.gff3"
     output:
-        protected(f"{REF}/genome.genes.sqlite")
+        f"{REF}/genome.genes.sqlite"
     params:
         str(SRC/"tbls"/"annotations"/"create_annotations_db.py")
     conda:
@@ -42,9 +42,9 @@ rule create_gene_universe:
 rule add_gff_annotations:
     input:
         sqlite = f"{REF}/genome.genes.sqlite",
-        de_data = f"{TBLS}/DE/shrunken_padj-filtered.tsv"
+        de_data = f"{TBLS}/DE/shrinked_padj-filtered.tsv"
     output:
-        f"{PROC}/annotations/gff_DE_geneIDs.tsv"
+        f"{PROC}/annotations/shrinked_padj-filtered_annotated.tsv"
     params:
         str(SRC/"tbls"/"annotations"/"add_gff_annotations.py")
     conda:

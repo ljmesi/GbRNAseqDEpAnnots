@@ -1,278 +1,250 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
-Read DE results tsv file and add annotations from annotations sqlite database
+Annotate significantly differentially expressed genes using 
+annotations originating from a gff3 file.
 """
 
-import click
-import pandas as pd
-from pathlib import Path
-import gffutils
+import argparse
 import csv
+import logging
+import sys
+from pathlib import Path
+from typing import List
+import pandas as pd
+import numpy as np
+import gffutils
 from collections import namedtuple
+from dataclasses import dataclass, field, asdict
+from collections import Counter
+
+logger = logging.getLogger()
+
+
+def parse_args(argv=None):
+    """Define and immediately parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Annotate DE genes.",
+        epilog="Example: python add_gff_annotations.py ",
+    )
+    parser.add_argument(
+        "sqlite_db",
+        metavar="SQLITE_DB",
+        type=Path,
+        help="Sqlite DB produced with gffutils from gff3 annotations file.",
+    )
+    parser.add_argument(
+        "de_genes",
+        metavar="DE_GENES",
+        type=Path,
+        help="Adjusted p-value filtered DE genes data produced by deseq2.",
+    )
+    parser.add_argument(
+        "annotated_de_genes",
+        metavar="ANNOTATED_DE_GENES",
+        type=Path,
+        help="Annotated DE genes data in tsv file format",
+    )
+    parser.add_argument(
+        "-l",
+        "--log-level",
+        help="The desired log level (default WARNING).",
+        choices=("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"),
+        default="WARNING",
+    )
+    return parser.parse_args(argv)
+
 
 def read_gff_db(db_file):
     """Read annotation sqlite database and return FeatureDB instance"""
-    click.echo(f"Reading {db_file} database...")
+    logger.info("Reading %s database...", db_file)
+
     return gffutils.FeatureDB(db_file)
 
-def match_mRNAs_and_CDSs(mRNA_list, CDS_list):
-    """Join together into a tuple all CDS objects in list and their parent mRNA"""
-    matched = []
-    for mRNA in mRNA_list:
-        # Start with an empty list of CDSs for each mRNA
-        all_CDSs_of_mRNA = []
-        for cds in CDS_list:
-            if(mRNA.id == cds.attributes.get("Parent")[0]):
-                all_CDSs_of_mRNA.append(cds)
-        matched.append((mRNA, all_CDSs_of_mRNA))
-    return matched
 
-def collect_all_mRNAs_and_CDSs(db, gene):
+def get_db_name(db_name_id: str, separator: str = ":") -> tuple:
     """
-    Gather all mRNA and CDS features of a gene into lists and return 
-    them as a tuple
+    Extract from e.g. 'FlyBase_Annotation_IDs:CG13745-PA'
+    (FlyBase_Annotation_IDs,CG13745-PA)
     """
-    mRNAs = []
-    CDSs = []
-    for feature in db.children(gene):
-        if(feature.featuretype == "mRNA"):
-            mRNAs.append(feature)
-            continue
-        if(feature.featuretype == "CDS"):
-            CDSs.append(feature)
-            continue
-    return (mRNAs, CDSs)
-
-def remove_dublicates(list_of_products):
-    """Remove dublicate gene product names from a list"""
-    return list(set(list_of_products))
-
-def get_products_from_cds_list(cds_list):
-    """Get a list of unique gene product strings from a list of CDS objects"""
-    all_products = []
-    found_products = False
-    for cds in cds_list:
-        # If there is a product it is returned inside of a list
-        product = cds.attributes.get("Product")
-        if product:
-            all_products.append(product[0])
-            found_products = True
-    if found_products:
-        return remove_dublicates(all_products)
-    else:
-        return list()
-        
-def get_IDs_from_cds_list(cds_list):
-    """Get a list of CDS IDs from a list of CDS objects"""
-    return [cds.id for cds in cds_list]
-
-def create_gene_annotations(db):
-    """Create gene annotions dictionary with all essential info in memory"""
-    click.echo("Creation of annotions dictionary started...")
-    gene_annotations = {}
-    for gene in db.features_of_type('gene'):
-        # Gather the gene's all mRNAs and CDSs into own lists
-        mRNAs, CDSs = collect_all_mRNAs_and_CDSs(db, gene)
-        # Iterate over CDSs and their parent mRNA and store all relevant info into
-        # gene_annotation dictionary
-        for tx_cds in match_mRNAs_and_CDSs(mRNAs, CDSs):        
-            mRNA = tx_cds[0]
-            all_CDSs_of_mRNA = tx_cds[1]
-            cds_products = get_products_from_cds_list(all_CDSs_of_mRNA)
-            cds_IDs = get_IDs_from_cds_list(all_CDSs_of_mRNA)
-            # Populate gene_annotations dictionary
-            if gene.id in gene_annotations:
-                gene_annotations[gene.id].append({
-                    "Gene_name" : gene.attributes.get("Name"),
-                    "Transcript_ID" : mRNA.id,
-                    "Ontology_term" : mRNA.attributes.get("Ontology_term"),
-                    "Dbxref" : mRNA.attributes.get("Dbxref"),
-                    "CDS_ID" : cds_IDs,
-                    "CDS_Product" : cds_products
-                    })
-            else:
-                gene_annotations[gene.id] = [{
-                    "Gene_name" : gene.attributes.get("Name"),
-                    "Transcript_ID" : mRNA.id,
-                    "Ontology_term" : mRNA.attributes.get("Ontology_term"),
-                    "Dbxref" : mRNA.attributes.get("Dbxref"),
-                    "CDS_ID" : cds_IDs,
-                    "CDS_Product" : cds_products
-                    }]
-    click.echo("Gene annotions dictionary finished")
-    return gene_annotations
+    return (db_name_id.split(separator)[0], db_name_id.split(separator)[1])
 
 
-def parse_refs(ref):
-    """Read an unparsed reference element and return db id"""
-    return (":").join(ref.split(":")[1:])
+@dataclass
+class Transcript:
+    """Class for storing all data related to each transcript in the annotation"""
 
-def add_ref(ref_dict, reference_db_name, unparsed_ref_element):
-    """Create a list of reference values"""
-    if reference_db_name in ref_dict:
-        ref_dict[reference_db_name].append(parse_refs(unparsed_ref_element))
-    else:
-        ref_dict[reference_db_name] = [parse_refs(unparsed_ref_element)]
-    return ref_dict
+    all_dbxs = set()
+    id: list[str] = field(default_factory=list)
+    parent: list[str] = field(default_factory=list)
+    flybase: list[str] = field(default_factory=list)
+    flybase_revhits: list[str] = field(default_factory=list)
+    flybase_name: list[str] = field(default_factory=list)
+    gbue11: list[str] = field(default_factory=list)
+    gbue11_revhits: list[str] = field(default_factory=list)
+    orthodb: list[str] = field(default_factory=list)
+    orthodb_revhits: list[str] = field(default_factory=list)
+    ontology_term: list[str] = field(default_factory=list)
+    dbxref_lst: list[str] = field(repr=False, default_factory=list)
+    dbxref: dict = None
 
-def parse_dbxref_list(dbxref_list, all_found):
-    """
-    Traverse a list of unparsed db references and add them to a dict of lists
-    Keep also track of which db references didn't exist in the list
-    """
-    dbxref = {}
-    for unparsed_reference in dbxref_list:
-        if (unparsed_reference.startswith("UniProtKB") or unparsed_reference.startswith("Swiss-Prot")):
-            dbxref = add_ref(dbxref, "UniProtKB", unparsed_reference)
-            all_found['UniProtKB'] = True
-        elif (unparsed_reference.startswith("GeneID")):
-            dbxref = add_ref(dbxref, "GeneID", unparsed_reference)
-            all_found['GeneID'] = True
-        elif (unparsed_reference.startswith("KEGG")):
-            dbxref = add_ref(dbxref, "KEGG", unparsed_reference)
-            all_found['KEGG'] = True
-        elif (unparsed_reference.startswith("PFAM")):
-            dbxref = add_ref(dbxref, "PFAM", unparsed_reference)
-            all_found['PFAM'] = True
-        elif (unparsed_reference.startswith("InterPro")):
-            dbxref = add_ref(dbxref, "InterPro", unparsed_reference)
-            all_found['InterPro'] = True
-        elif (unparsed_reference.startswith("EMBL")):
-            dbxref = add_ref(dbxref, "EMBL", unparsed_reference)
-            all_found['EMBL'] = True
-        else:
-            # If not matched with any, create an unparsed unknown element
-            dbxref["Unknown"] = unparsed_reference
-            all_found['Unknown'] = True
-            click.echo(f"Unknown reference added: {unparsed_reference}")
-    return (dbxref, all_found)
-
-def ntuple_to_list(ntuple):
-    """Convert named tuple values to list"""
-    return list(ntuple)
-
-def parse_Dbxref(dbxref_list):
-    """Parse a list dbxrefs and return a dict of db as key and ids as values"""
-    dbxref = {}
-    # Handle completely missing Dbxref data
-    if dbxref_list is None:
-        return {
-            "UniProtKB":[""],
-            "GeneID":[""],
-            "KEGG":[""],
-            "PFAM":[""],
-            "InterPro":[""],
-            "EMBL":[""]
-            }
-    
-    # Keep track of partially missing Dbxref data
-    all_found = {
-        "UniProtKB" : False,
-        "GeneID" : False,
-        "KEGG" : False,
-        "PFAM" : False,
-        "InterPro" : False,
-        "EMBL" : False,
-        "Unknown" : False
-    }
-    # Create dicts for db ids and how partially the references were found
-    dbxref, all_found = parse_dbxref_list(dbxref_list, all_found)
-    
-    # Fill in missing data with empty strings in a list
-    for db, found in all_found.items():
-        if not found:
-            dbxref[db] = [""]
-    return dbxref
-
-def remove_duplicate_values(dbxref_dict):
-    """Go through all db references and remove duplicate db IDs"""
-    for key, value in dbxref_dict.items():
-        dbxref_dict[key] = remove_dublicates(value)
-    return dbxref_dict
-
-def convert_nones_to_list(element):
-    """Convert NoneTypes are converted to empty lists"""
-    if element is None:
-        return []
-    else:
-        return element
-
-
-def concat_list(in_list,concat_char = ","):
-    """Concatenate all list elements and return a single element list of the results"""
-    if isinstance(in_list, list):
-        return [concat_char.join(in_list)]
-    else:
-        return [""]
-    
-
-@click.command()
-@click.argument('db-file', type=click.Path(exists=True))
-@click.argument('unannotated-de', type=click.Path(exists=True))
-@click.argument('annotated-de', type=click.Path())
-def main(db_file, unannotated_de, annotated_de):
-    """Run the main CLI application"""
-    db = read_gff_db(db_file)
-    click.echo(f"{db_file} database read")
-    gene_annotations = create_gene_annotations(db)
-    
-    # Read and write gff annotations
-    with open(unannotated_de, newline="") as infile, open(annotated_de, 'wt') as out_file:
-        # Change path objects to strings
-        unannotated_fn = str(unannotated_de)
-        annotated_fn = str(annotated_de)
-
-        # Initialise reading and writing tsvs
-        reader = csv.reader(infile, delimiter="\t")
-        click.echo(f"Opened {unannotated_fn} file for reading")
-        tsv_writer = csv.writer(out_file, delimiter='\t')
-        click.echo(f"Opened {annotated_fn} file for writing")
-
-        # Write tsv header
-        gff_columns = ["Gene_name", "GeneID", "CDS_Products", "Gff_ontology_terms", "Transcript_IDs", "UniProtKB_Swiss_Prot", "KEGG", "PFAM", "InterPro", "EMBL"]
-        tsv_writer.writerow(["Genes"]+gff_columns)
-        click.echo(f"Header written to {annotated_fn}")
-
-        # Read tsv file row-wise
-        Data = namedtuple("Data", next(reader))  # get names from column headers
-        click.echo(f"Starting to write the parsed gff-data to {annotated_fn} file")
-        for data in map(Data._make, reader):
-            # Capture DE data into a list
-            data_row = ntuple_to_list(data)
-            # Reset all lists/dict for each gene
-            ontology_terms = []
-            transcript_IDs = []
-            CDS_Products = []
+    def __post_init__(self):
+        """Populate dbxref with keys and values from dbxref field in gff annotations DB"""
+        if self.dbxref_lst:
+            db_names: list[str] = [get_db_name(db_ref)[0] for db_ref in self.dbxref_lst]
+            db_name_counts: dict = dict(Counter(db_names))
             dbxref_dict = {}
-            
-            # Gather all annotation data 
-            # Gene annotations for each gene ID consist of a list of one or more 
-            # transcripts with all available annotations
-            for transcript in gene_annotations[data.Genes]:
-                # gene_name is the same for all the transcripts
-                gene_name = transcript["Gene_name"]
-                transcript_IDs.append(transcript["Transcript_ID"])
-                ontology_terms = ontology_terms + convert_nones_to_list(transcript["Ontology_term"])
-                dbxref_dict = parse_Dbxref(transcript["Dbxref"])
-                CDS_Products = CDS_Products + transcript["CDS_Product"]
-            
-            # Remove dublicates among different transcripts
-            ontology_terms = remove_dublicates(ontology_terms)
-            CDS_Products = remove_dublicates(CDS_Products)
-            dbxref_dict = remove_duplicate_values(dbxref_dict)
-            
-            # Write all new data (don't need the DE data) to a row
-            tsv_writer.writerow([data.Genes]+
-                                concat_list(gene_name)+
-                                concat_list(dbxref_dict["GeneID"])+
-                                concat_list(CDS_Products)+
-                                concat_list(ontology_terms)+
-                                concat_list(transcript_IDs)+
-                                concat_list(dbxref_dict["UniProtKB"])+
-                                concat_list(dbxref_dict["KEGG"])+
-                                concat_list(dbxref_dict["PFAM"])+
-                                concat_list(dbxref_dict["InterPro"])+
-                                concat_list(dbxref_dict["EMBL"]))
+            for db_name_ref in self.dbxref_lst:
+                db_name, db_id = get_db_name(db_name_ref)
+                num_db_names = db_name_counts.get(db_name)
+                # Add to dict if only one else update counter dict and add
+                # unique ending to the dict key
+                if num_db_names == 1:
+                    dbxref_dict.update({db_name: db_id})
+                else:
+                    db_names_left: int = num_db_names - 1
+                    db_name_counts.update({db_name: db_names_left})
+                    new_db_name: str = f"{db_name}_{num_db_names}"
+                    dbxref_dict.update({new_db_name: db_id})
+            self.dbxref = dbxref_dict
+            Transcript.all_dbxs.update(dbxref_dict.keys())
 
-if __name__ == '__main__':
-    main()
+
+def create_transcripts_list(
+    features_db: gffutils.FeatureDB,
+) -> tuple[list[Transcript], set[str]]:
+    """Iterate over all mRNA features in the features_db and create a list of transcripts.
+
+    Args:
+        features_db (gffutils.FeatureDB): FeatureDB containing all features in the gff3 database.
+
+    Returns:
+        tuple[list[Transcript], set[str]]: List of all transcripts and a set of all unique external database references.
+    """
+    return (
+        [
+            Transcript(
+                id=element.attributes.get("ID"),
+                parent=element.attributes.get("Parent"),
+                flybase=element.attributes.get("flybase"),
+                flybase_revhits=element.attributes.get("flybase_revhits"),
+                flybase_name=element.attributes.get("flybase_name"),
+                gbue11=element.attributes.get("gbue11"),
+                gbue11_revhits=element.attributes.get("gbue11_revhits"),
+                orthodb=element.attributes.get("orthodb"),
+                orthodb_revhits=element.attributes.get("orthodb_revhits"),
+                ontology_term=element.attributes.get("Ontology_term"),
+                dbxref_lst=element.attributes.get("Dbxref"),
+            )
+            for element in features_db.features_of_type("mRNA")
+        ],
+        sorted(list(Transcript.all_dbxs)),
+    )
+
+
+def main(argv=None):
+    """Coordinate argument parsing and program execution."""
+    args = parse_args(argv)
+    logging.basicConfig(level=args.log_level, format="[%(levelname)s] %(message)s")
+    sqlite_db = args.sqlite_db
+    if not sqlite_db.is_file():
+        logger.error("The given input file %s was not found!", sqlite_db)
+        sys.exit(2)
+    de_genes = args.de_genes
+    if not de_genes.is_file():
+        logger.error("The given input file %s was not found!", de_genes)
+        sys.exit(3)
+
+    transcripts, dbx_refs_sorted = create_transcripts_list(read_gff_db(sqlite_db))
+
+    transcript_annotation_header: list[str] = [
+        "id",
+        "parent",
+        "flybase",
+        "flybase_revhits",
+        "flybase_name",
+        "gbue11",
+        "gbue11_revhits",
+        "orthodb",
+        "orthodb_revhits",
+        "ontology_term",
+    ]
+
+    df_data: list[str] = []
+    header: list[str] = []
+
+    with open(de_genes, "r") as reader:
+        # Handle DE data with column names so it's easier to access each element
+        diff_exp_reader = csv.reader(reader, delimiter="\t")
+        de_header = next(diff_exp_reader)
+        header = de_header + transcript_annotation_header + dbx_refs_sorted
+        De_data = namedtuple("DE_data", de_header)
+        for data in map(De_data._make, diff_exp_reader):
+            # Capture all data from our current DE data row
+            current_de_data = list(data)
+            # Find transcripts that belong to the DE gene
+            for transcript in transcripts:
+                if data.Genes == transcript.parent[0]:
+                    # Get each piece of transcript annotation in same order to a list
+                    # so that it can be printed in correct order as annotation to the
+                    # rest of DE data
+                    transcript_annotation = []
+                    for column in transcript_annotation_header:
+                        column_value = asdict(transcript).get(column)
+                        # Join all non-None column values to one string
+                        if column_value:
+                            transcript_annotation.append(",".join(column_value))
+                        else:
+                            # None:s should be written as "NA" in the annotation
+                            transcript_annotation.append(np.nan)
+                    # Fetch all in the DB existing dbx references from the annotation
+                    for dbx_ref in dbx_refs_sorted:
+                        # If we have a dbx_ref fetch values from it
+                        if transcript.dbxref:
+                            dbx_ref_fetched = transcript.dbxref.get(dbx_ref)
+                            # If the reference value is non-None add it to the annotation
+                            if dbx_ref_fetched:
+                                transcript_annotation.append(dbx_ref_fetched)
+                            else:
+                                # None:s should be written as "NA" in the annotation
+                                transcript_annotation.append(np.nan)
+                        else:
+                            # None:s should be written as "NA" in the annotation
+                            transcript_annotation.append(np.nan)
+                    # Append the data row as a list
+                    df_data.append(current_de_data + transcript_annotation)
+
+        df = pd.DataFrame(df_data, columns=header)
+        # Drop all columns where all values are np.nan
+        df.dropna(axis=1, how="all", inplace=True)
+        # Drop duplicate "parent" column
+        df.drop("parent", axis=1, inplace=True)
+        # Rename columns according to below dictionary
+        renamings = {
+            "id": "transcript_ID",
+            "flybase": "FlyBase_ID",
+            "flybase_revhits": "FlyBase_reverse_hits_IDs",
+            "flybase_name": "FlyBase_symbol_name",
+            "ontology_term": "Annotated_Gene_Ontology_terms",
+            "FlyBase": "FlyBase_reference_ID1",
+            "FlyBase_2": "FlyBase_reference_ID2",
+            "FlyBase_Annotation_IDs": "FlyBase_Annotation_Symbol_ID1",
+            "FlyBase_Annotation_IDs_2": "FlyBase_Annotation_Symbol_ID2",
+            "FlyMine": "FlyMine_ID1",
+            "FlyMine_2": "FlyMine_ID2",
+            "GB_protein": "GB_protein_ID1",
+            "GB_protein_2": "GB_protein_ID2",
+            "GB_protein_3": "GB_protein_ID3",
+            "GB_protein_4": "GB_protein_ID4",
+            "GB_protein_5": "GB_protein_ID5",
+            "REFSEQ": "NCBI_Reference_Sequence_ID1",
+            "REFSEQ_2": "NCBI_Reference_Sequence_ID2",
+            "UniProt/Swiss-Prot": "UniProt_Swiss-Prot_ID",
+            "UniProt/TrEMBL": "UniProt_TrEMBL_ID1",
+            "UniProt/TrEMBL_2": "UniProt_TrEMBL_ID2",
+        }
+        df.rename(columns=renamings, inplace=True)
+        df.to_csv(args.annotated_de_genes, sep="\t", index=False)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

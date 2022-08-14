@@ -2,7 +2,7 @@
 
 rule assign_GO_terms_to_geneIDs:
     input:
-        sigGenelist = f"{TBLS}/DE/shrunken_padj-filtered.tsv",
+        sigGenelist = f"{TBLS}/DE/shrinked_padj-filtered.tsv",
         geneGOmappings = f"{PROC}/annotations/geneIDs_GOs.tsv"
     output:
         f"{TBLS}/GSEA/GO-genes_list_{{GO_category}}_Fisher.tsv"
@@ -13,9 +13,9 @@ rule assign_GO_terms_to_geneIDs:
     conda:
         f"{ENVS}/GSEA.yml"
     benchmark:
-        BMARKS/"GSEA"/"assign_GO_terms_to_geneIDs_{{GO_category}}.tsv"
+        BMARKS/f"GSEA/assign_GO_terms_to_geneIDs_{{GO_category}}.tsv"
     log: 
-        LOGS/"GSEA"/"assign_GO_terms_to_geneIDs_{{GO_category}}.log"
+        LOGS/f"GSEA/assign_GO_terms_to_geneIDs_{{GO_category}}.log"
     script:
         str(SRC/"data"/"GSEA"/"assign_GO_terms_to_geneIDs.R")
 
@@ -29,12 +29,12 @@ rule expand_genes:
         GO_category = "(BP)|(MF)|(CC)"
     conda:
         f"{ENVS}/GSEA.yml"
-    benchmark:
-        BMARKS/"GSEA"/"expand_genes_{{GO_category}}.tsv"
     params:
         str(SRC/"data"/"GSEA"/"expandGenes.awk")
+    benchmark:
+        BMARKS/f"GSEA/expand_genes_{{GO_category}}.tsv"
     log: 
-        LOGS/"GSEA"/"genes_GO_{{GO_category}}.log"
+        LOGS/f"GSEA/genes_GO_{{GO_category}}.log"
     shell:    
         r"""
         awk \
@@ -46,7 +46,7 @@ rule expand_genes:
 
 rule plot_GO_terms:
     input:
-        sigGenelist = f"{TBLS}/DE/shrunken_padj-filtered.tsv",
+        sigGenelist = f"{TBLS}/DE/shrinked_padj-filtered.tsv",
         geneGOmappings = f"{PROC}/annotations/geneIDs_GOs.tsv"
     output:
         GO_graph = report(f"{FIGS}/GSEA/{{GO_category}}_Fisher_{{algo}}.svg",
@@ -60,8 +60,8 @@ rule plot_GO_terms:
     conda:
         f"{ENVS}/GSEA.yml"
     benchmark:
-        BMARKS/"GSEA"/"{{GO_category}}_plot_GO_terms_{{algo}}.tsv"
+        BMARKS/"GSEA/{GO_category}_plot_GO_terms_{algo}.tsv"
     log: 
-        LOGS/"GSEA"/"{{GO_category}}_Fisher_{{algo}}.log"
+        LOGS/"GSEA/{GO_category}_Fisher_{algo}.log"
     script:
         str(SRC/"vis"/"GSEA"/"plot_GO_terms.R")

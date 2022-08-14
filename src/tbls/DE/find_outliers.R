@@ -43,7 +43,7 @@ print(head(res_w_outliers))
 
 # Prepare a dataframe without outliers (indicated by having pvalue equal to NA)
 
-res_without_outliers <- as.data.frame(readRDS(snakemake@input[["DESeq_results_shrunken"]])) %>%
+res_without_outliers <- as.data.frame(readRDS(snakemake@input[["DESeq_results_shrinked"]])) %>%
         rownames_to_column(rowname_col)
 
 print(head(res_without_outliers))

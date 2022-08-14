@@ -115,14 +115,11 @@ rule execute_DE:
         DESeq_raw = f"{PROC}/DE/DESeq_raw.RDS"
     output:
         DESeq_analysis_obj = f"{PROC}/DE/DESeq-obj.RDS",
-        DESeq_results_non_shrunken = f"{PROC}/DE/not-shrunken.RDS",
-        DESeq_results_shrunken = f"{PROC}/DE/shrunken.RDS",
-        tbl_non_shrunken = f"{TBLS}/DE/not-shrunken_not-filtered.tsv",
-        tbl_non_shrunken_padj_filtered = f"{TBLS}/DE/not-shrunken_padj-filtered.tsv",
-        tbl_shrunken = report(f"{TBLS}/DE/shrunken_not-filtered.tsv", 
+        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
+        tbl_shrinked = report(f"{TBLS}/DE/shrinked_not-filtered.tsv", 
                                 caption = f"{REP}/DE/shrinked.rst",
                                 category = DE),
-        tbl_shrunken_padj_filtered = report(f"{TBLS}/DE/shrunken_padj-filtered.tsv",
+        tbl_shrinked_padj_filtered = report(f"{TBLS}/DE/shrinked_padj-filtered.tsv",
                                     caption = f"{REP}/DE/shrinked_sig.rst",
                                     category = DE),
     params:
@@ -177,7 +174,7 @@ rule plot_dispersions:
 
 rule find_outliers:
     input:
-        DESeq_results_shrunken = f"{PROC}/DE/shrunken.RDS",
+        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
         DESeq_analysis_obj = f"{PROC}/DE/DESeq-obj.RDS",
         raw_counts = f"{RAW}/all_ReadsPerGene.out.tsv",
         metadata = config["DE"]["Experimental_design"]
@@ -209,8 +206,6 @@ rule plot_MAplot:
         MAplot = report(f"{FIGS}/DE/MAplot_{{shrink_status}}.svg",
                         caption = f"{REP}/DE/MAplots.rst",
                         category = DE)
-    wildcard_constraints:
-        shrink_status="(not-shrunken)|(shrunken)"
     conda:
         f"{ENVS}/DE.yml"
     benchmark:
@@ -223,7 +218,7 @@ rule plot_MAplot:
 
 rule plot_volcano:
     input:
-        DESeq_results_shrunken = f"{PROC}/DE/shrunken.RDS",
+        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
         gene_annotations = f"{TBLS}/summarise/each_gene_in_one_row.tsv"
     output:
         volcano_plot = f"{FIGS}/DE/volcanoplot_sketch.svg",
@@ -245,7 +240,7 @@ rule plot_volcano:
 rule plot_DE_heatmap:
     input:
         normalised_counts = f"{PROC}/DE/normalised_counts.tsv",
-        DESeq_results_shrunken = f"{PROC}/DE/shrunken.RDS",
+        DESeq_results_shrinked = f"{PROC}/DE/shrinked.RDS",
         metadata = config["DE"]["Experimental_design"]
     output:
         DE_heatmap = report(f"{FIGS}/DE/DE_heatmap.svg",
