@@ -43,8 +43,8 @@ def order_cols(df, col_name_list):
 def main(args):
     """Run the command line program"""
     unordered_df = concat_cols([read_tsv(file_path, 4) for file_path in args.infiles])
-    df = order_cols(unordered_df, ["12-5","12-6","12-13","12-15","18-1","18-2","18-3","18-8"])
-    write_tsv(args.output, df)
+    ordered_df = order_cols(unordered_df, ["12-5","12-6","12-13","12-15","18-1","18-2","18-3","18-8"])
+    write_tsv(args.output, ordered_df)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)

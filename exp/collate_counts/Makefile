@@ -12,7 +12,7 @@ CURRENT_CONDA_ENV_NAME = collate_counts
 # Note that the extra activate is needed to ensure that the activate floats env to the front of PATH
 CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate $(CURRENT_CONDA_ENV_NAME)
 
-OUTFILE = all_samples_genes_count.tsv
+OUTFILE = all_ReadsPerGene.out.tsv
 STAR_MAPPING_OUTDIRS = submit_star_alignments
 
 ## collate_counts: Collate STAR aligner raw output gene counts to one tsv file 
