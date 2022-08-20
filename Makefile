@@ -13,7 +13,7 @@ summary \
 help \
 update_env
 
-# The conda env definition file "requirements.yml" is located in the project's root directory
+# The used conda env definition file is located in "envs/snakemake.yml"
 CURRENT_CONDA_ENV_NAME = snakemake
 ACTIVATE_CONDA = source $$(conda info --base)/etc/profile.d/conda.sh
 CONDA_ACTIVATE = $(ACTIVATE_CONDA) ; conda activate ; conda activate $(CURRENT_CONDA_ENV_NAME)
