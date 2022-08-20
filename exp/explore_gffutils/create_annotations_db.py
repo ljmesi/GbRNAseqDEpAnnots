@@ -1,1 +1,0 @@
-../../src/tbls/GSEA/create_annotations_db.py
