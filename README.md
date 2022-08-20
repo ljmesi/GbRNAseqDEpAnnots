@@ -23,7 +23,7 @@ The script for producing gene universe from genome annotation used in gene set e
 
 ## Summarisation
 
-Finally, significant (<img src="https://render.githubusercontent.com/render/math?math=\text{adjusted p-value} \leq 0.01">) results from DE analysis, GSEA and genome annotations were combined into one table and interactive [plotly (v.5.9.0)](https://plotly.com/python/) volcano plot. These were executed with [`src/tbls/summarise/each_gene_in_one_row.py`](https://github.com/ljmesi/GbRNAseqDEpAnnots/blob/main/src/tbls/summarise/each_gene_in_one_row.py) and [`src/vis/summarise/interactive_volcano.py`](https://github.com/ljmesi/GbRNAseqDEpAnnots/blob/main/src/vis/summarise/interactive_volcano.py) respectively.
+Finally, significant (Adjusted p-value lower or equal to 0.01) results from DE analysis, GSEA and genome annotations were combined into one table and interactive [plotly (v.5.9.0)](https://plotly.com/python/) volcano plot. These were executed with [`src/tbls/summarise/each_gene_in_one_row.py`](https://github.com/ljmesi/GbRNAseqDEpAnnots/blob/main/src/tbls/summarise/each_gene_in_one_row.py) and [`src/vis/summarise/interactive_volcano.py`](https://github.com/ljmesi/GbRNAseqDEpAnnots/blob/main/src/vis/summarise/interactive_volcano.py) respectively.
 
 ## Makefile
 
