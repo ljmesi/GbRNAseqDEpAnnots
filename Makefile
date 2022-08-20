@@ -5,10 +5,13 @@ SHELL = /bin/bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-.PHONY: run \
+.PHONY: \
+run \
 clean \
 report \
-help
+summary \
+help \
+update_env
 
 # The conda env definition file "requirements.yml" is located in the project's root directory
 CURRENT_CONDA_ENV_NAME = snakemake
